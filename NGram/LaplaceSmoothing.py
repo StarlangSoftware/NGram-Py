@@ -4,8 +4,10 @@ from NGram.SimpleSmoothing import SimpleSmoothing
 
 class LaplaceSmoothing(SimpleSmoothing):
 
+    __delta: float
+
     def __init__(self, delta = 1.0):
-        self.delta = delta
+        self.__delta = delta
 
     """
     Wrapper function to set the N-gram probabilities with laplace smoothing.
@@ -19,4 +21,4 @@ class LaplaceSmoothing(SimpleSmoothing):
         Bigram, etc.
     """
     def setProbabilities(self, nGram: NGram, level: int):
-        nGram.setProbabilityWithPseudoCount(self.delta, level)
+        nGram.setProbabilityWithPseudoCount(self.__delta, level)

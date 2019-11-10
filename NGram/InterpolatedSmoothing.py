@@ -2,11 +2,16 @@ from Sampling.KFoldCrossValidation import KFoldCrossValidation
 
 from NGram.GoodTuringSmoothing import GoodTuringSmoothing
 from NGram.NGram import NGram
+from NGram.SimpleSmoothing import SimpleSmoothing
 from NGram.TrainedSmoothing import TrainedSmoothing
 import math
 
 
 class InterpolatedSmoothing(TrainedSmoothing):
+
+    __lambda1: float
+    __lambda2: float
+    __simpleSmoothing: SimpleSmoothing
 
     """
     Constructor of {@link InterpolatedSmoothing}
@@ -18,9 +23,9 @@ class InterpolatedSmoothing(TrainedSmoothing):
     """
     def __init__(self, simpleSmoothing=None):
         if simpleSmoothing is None:
-            self.simpleSmoothing = GoodTuringSmoothing()
+            self.__simpleSmoothing = GoodTuringSmoothing()
         else:
-            self.simpleSmoothing = simpleSmoothing
+            self.__simpleSmoothing = simpleSmoothing
 
     """
     The algorithm tries to optimize the best lambda for a given corpus. The algorithm uses perplexity on the validation
@@ -29,7 +34,8 @@ class InterpolatedSmoothing(TrainedSmoothing):
     PARAMETERS
     ----------
     nGrams : list
-        10 N-Grams learned for different folds of the corpus. nGrams[i] is the N-Gram trained with i'th train fold of the corpus.
+        10 N-Grams learned for different folds of the corpus. nGrams[i] is the N-Gram trained with i'th train fold of 
+        the corpus.
     kFoldCrossValidation : KFoldCrossvalidation
         Cross-validation data used in training and testing the N-grams.
     lowerBound : float
@@ -40,7 +46,7 @@ class InterpolatedSmoothing(TrainedSmoothing):
     float
         Best lambda optimized with k-fold crossvalidation.
     """
-    def learnBestLambda(self, nGrams: list, kFoldCrossValidation: KFoldCrossValidation, lowerBound : float) -> float:
+    def learnBestLambda(self, nGrams: list, kFoldCrossValidation: KFoldCrossValidation, lowerBound: float) -> float:
         bestPrevious = -1
         upperBound = 0.999
         bestLambda = (lowerBound + upperBound) / 2
@@ -75,7 +81,8 @@ class InterpolatedSmoothing(TrainedSmoothing):
     PARAMETERS
     ----------
     nGrams : list
-        10 N-Grams learned for different folds of the corpus. nGrams[i] is the N-Gram trained with i'th train fold of the corpus.
+        10 N-Grams learned for different folds of the corpus. nGrams[i] is the N-Gram trained with i'th train fold of 
+        the corpus.
     kFoldCrossValidation : KFoldCrossValidation
         Cross-validation data used in training and testing the N-grams.
     lowerBound1 : float
@@ -122,7 +129,7 @@ class InterpolatedSmoothing(TrainedSmoothing):
                 if math.fabs(bestPrevious - bestPerplexity) / bestPerplexity < 0.001:
                     break
             bestPrevious = bestPerplexity
-        return (bestLambda1, bestLambda2)
+        return bestLambda1, bestLambda2
 
     """
     Wrapper function to learn the parameters (lambda1 and lambda2) in interpolated smoothing. The function first creates 
@@ -145,12 +152,12 @@ class InterpolatedSmoothing(TrainedSmoothing):
         for i in range(K):
             nGrams.append(NGram(N, kFoldCrossValidation.getTrainFold(i)))
             for j in range(2, N + 1):
-                nGrams[i].calculateNGramProbabilitiesSimpleLevel(self.simpleSmoothing, j)
-            nGrams[i].calculateNGramProbabilitiesSimpleLevel(self.simpleSmoothing, 1)
+                nGrams[i].calculateNGramProbabilitiesSimpleLevel(self.__simpleSmoothing, j)
+            nGrams[i].calculateNGramProbabilitiesSimpleLevel(self.__simpleSmoothing, 1)
         if N == 2:
-            self.lambda1 = self.learnBestLambda(nGrams, kFoldCrossValidation, 0.1)
+            self.__lambda1 = self.learnBestLambda(nGrams, kFoldCrossValidation, 0.1)
         elif N == 3:
-            (self.lambda1, self.lambda2) = self.learnBestLambdas(nGrams, kFoldCrossValidation, 0.1, 0.1)
+            (self.__lambda1, self.__lambda2) = self.learnBestLambdas(nGrams, kFoldCrossValidation, 0.1, 0.1)
 
     """
     Wrapper function to set the N-gram probabilities with interpolated smoothing.
@@ -165,9 +172,9 @@ class InterpolatedSmoothing(TrainedSmoothing):
     """
     def setProbabilities(self, nGram: NGram, level: int):
         for j in range(2, nGram.getN() + 1):
-            nGram.calculateNGramProbabilitiesSimpleLevel(self.simpleSmoothing, j)
-        nGram.calculateNGramProbabilitiesSimpleLevel(self.simpleSmoothing, 1)
+            nGram.calculateNGramProbabilitiesSimpleLevel(self.__simpleSmoothing, j)
+        nGram.calculateNGramProbabilitiesSimpleLevel(self.__simpleSmoothing, 1)
         if nGram.getN() == 2:
-            nGram.setLambda2(self.lambda1)
+            nGram.setLambda2(self.__lambda1)
         elif nGram.getN() == 3:
-            nGram.setLambda3(self.lambda1, self.lambda2)
+            nGram.setLambda3(self.__lambda1, self.__lambda2)

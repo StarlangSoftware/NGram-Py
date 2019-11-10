@@ -7,6 +7,8 @@ import math
 
 class AdditiveSmoothing(TrainedSmoothing):
 
+    __delta: float
+
     """
     The algorithm tries to optimize the best delta for a given corpus. The algorithm uses perplexity on the validation
     set as the optimization criterion.
@@ -68,7 +70,7 @@ class AdditiveSmoothing(TrainedSmoothing):
         kFoldCrossValidation = KFoldCrossValidation(corpus, K, 0)
         for i in range(K):
             nGrams.append(NGram(N, kFoldCrossValidation.getTrainFold(i)))
-        self.delta = self.learnBestDelta(nGrams, kFoldCrossValidation, 0.1)
+        self.__delta = self.learnBestDelta(nGrams, kFoldCrossValidation, 0.1)
 
     """
     Wrapper function to set the N-gram probabilities with additive smoothing.
@@ -82,4 +84,4 @@ class AdditiveSmoothing(TrainedSmoothing):
         with this function. If level = 1, N-Gram is treated as UniGram, if level = 2, N-Gram is treated as Bigram, etc.
     """
     def setProbabilities(self, nGram: NGram, level: int):
-        nGram.setProbabilityWithPseudoCount(self.delta, level)
+        nGram.setProbabilityWithPseudoCount(self.__delta, level)

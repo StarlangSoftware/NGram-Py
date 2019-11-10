@@ -8,6 +8,14 @@ import math
 
 class NGram:
 
+    rootNode: NGramNode
+    __N: int
+    __lambda1: float
+    __lambda2: float
+    __interpolated: bool
+    __vocabulary: set
+    __probabilityOfUnseen: list
+
     """
     Constructor of NGram class which takes a list corpus and Integer size of ngram as input.
     It adds all sentences of corpus as ngrams.
@@ -20,9 +28,9 @@ class NGram:
         list of sentences whose ngrams are added.
     """
     def __init__(self, N: int, corpus = None):
-        self.N = N
-        self.vocabulary = set()
-        self.probabilityOfUnseen = []
+        self.__N = N
+        self.__vocabulary = set()
+        self.__probabilityOfUnseen = []
         self.rootNode = NGramNode(None)
         if corpus is not None:
             for i in range(len(corpus)):
@@ -35,7 +43,7 @@ class NGram:
         size of ngram.
     """
     def getN(self) -> int:
-        return self.N
+        return self.__N
 
     """
     Set size of ngram.
@@ -46,7 +54,7 @@ class NGram:
         size of ngram
     """
     def setN(self, N: int):
-        self.N = N
+        self.__N = N
 
     """
     Adds given sentence to set the vocabulary and create and add ngrams of the sentence to NGramNode the rootNode
@@ -58,9 +66,9 @@ class NGram:
     """
     def addNGramSentence(self, symbols: list):
         for s in symbols:
-            self.vocabulary.add(s)
-        for j in range(len(symbols) - self.N + 1):
-            self.rootNode.addNGram(symbols, j, self.N)
+            self.__vocabulary.add(s)
+        for j in range(len(symbols) - self.__N + 1):
+            self.rootNode.addNGram(symbols, j, self.__N)
 
     """
     Adds given array of symbols to set the vocabulary and to NGramNode the rootNode
@@ -72,8 +80,8 @@ class NGram:
     """
     def addNGram(self, symbols: list):
         for s in symbols:
-            self.vocabulary.add(s)
-        self.rootNode.addNGram(symbols, 0, self.N)
+            self.__vocabulary.add(s)
+        self.rootNode.addNGram(symbols, 0, self.__N)
 
     """
     RETURNS
@@ -82,7 +90,7 @@ class NGram:
         vocabulary size.
     """
     def vocabularySize(self):
-        return len(self.vocabulary)
+        return len(self.__vocabulary)
 
     """
     Sets lambda, interpolation ratio, for bigram and unigram probabilities.
@@ -94,9 +102,9 @@ class NGram:
         interpolation ratio for bigram probabilities
     """
     def setLambda2(self, lambda1: float):
-        if self.N == 2:
-            self.interpolated = True
-            self.lambda1 = lambda1
+        if self.__N == 2:
+            self.__interpolated = True
+            self.__lambda1 = lambda1
 
     """
     Sets lambdas, interpolation ratios, for trigram, bigram and unigram probabilities.
@@ -110,10 +118,10 @@ class NGram:
         interpolation ratio for bigram probabilities
     """
     def setLambda3(self, lambda1: float, lambda2: float):
-        if self.N == 3:
-            self.interpolated = True
-            self.lambda1 = lambda1
-            self.lambda2 = lambda2
+        if self.__N == 3:
+            self.__interpolated = True
+            self.__lambda1 = lambda1
+            self.__lambda2 = lambda2
 
     """
     Calculates NGram probabilities using given corpus and TrainedSmoothing smoothing method.
@@ -273,11 +281,11 @@ class NGram:
         perplexity of given corpus
     """
     def getPerplexity(self, corpus: list) -> float:
-        if self.N == 1:
+        if self.__N == 1:
             return self.getUniGramPerplexity(corpus)
-        elif self.N == 2:
+        elif self.__N == 2:
             return self.getBiGramPerplexity(corpus)
-        elif self.N == 3:
+        elif self.__N == 3:
             return self.getTriGramPerplexity(corpus)
         else:
             return 0
@@ -300,18 +308,18 @@ class NGram:
         probability of given sequence.
     """
     def getProbability(self, *args) -> float:
-        if self.N == 1:
+        if self.__N == 1:
             return self.getUniGramProbability(args[0])
-        elif self.N == 2:
-            if self.interpolated:
-                return self.lambda1 * self.getBiGramProbability(args[0], args[1]) + (1 - self.lambda1) * self.getUniGramProbability(args[1])
+        elif self.__N == 2:
+            if self.__interpolated:
+                return self.__lambda1 * self.getBiGramProbability(args[0], args[1]) + (1 - self.__lambda1) * self.getUniGramProbability(args[1])
             else:
                 return self.getBiGramProbability(args[0], args[1])
-        elif self.N == 3:
-            if self.interpolated:
-                return self.lambda1 * self.getTriGramProbability(args[0], args[1], args[2]) + \
-                       self.lambda2 * self.getBiGramProbability(args[1], args[2]) + \
-                       (1 - self.lambda1 - self.lambda2) * self.getUniGramProbability(args[2])
+        elif self.__N == 3:
+            if self.__interpolated:
+                return self.__lambda1 * self.getTriGramProbability(args[0], args[1], args[2]) + \
+                       self.__lambda2 * self.getBiGramProbability(args[1], args[2]) + \
+                       (1 - self.__lambda1 - self.__lambda2) * self.getUniGramProbability(args[2])
             else:
                 return self.getTriGramProbability(args[0], args[1], args[2])
         else:
@@ -404,7 +412,7 @@ class NGram:
         else:
             vocabularySize = self.vocabularySize()
         self.rootNode.setProbabilityWithPseudoCount(pseudoCount, height, vocabularySize)
-        self.probabilityOfUnseen[height - 1] = 1.0 / vocabularySize
+        self.__probabilityOfUnseen[height - 1] = 1.0 / vocabularySize
 
     """
     Find maximum occurrence in given height.
@@ -469,4 +477,4 @@ class NGram:
     """
     def setAdjustedProbability(self, countsOfCounts: list, height: int, pZero: float):
         self.rootNode.setAdjustedProbability(countsOfCounts, height, self.vocabularySize() + 1, pZero)
-        self.probabilityOfUnseen[height - 1] = 1.0 / (self.vocabularySize() + 1)
+        self.__probabilityOfUnseen[height - 1] = 1.0 / (self.vocabularySize() + 1)

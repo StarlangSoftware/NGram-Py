@@ -4,6 +4,8 @@ from NGram.NoSmoothing import NoSmoothing
 
 class NoSmoothingWithDictionary(NoSmoothing):
 
+    __dictionary: set
+
     """
     Constructor of {@link NoSmoothingWithDictionary}
 
@@ -13,7 +15,7 @@ class NoSmoothingWithDictionary(NoSmoothing):
         Dictionary to use in smoothing
     """
     def __init__(self, dictionary: set):
-        self.dictionary = dictionary
+        self.__dictionary = dictionary
 
     """
     Wrapper function to set the N-gram probabilities with no smoothing and replacing unknown words not found in {@link HashSet} the dictionary.
@@ -27,5 +29,5 @@ class NoSmoothingWithDictionary(NoSmoothing):
         with this function. If level = 1, N-Gram is treated as UniGram, if level = 2, N-Gram is treated as Bigram, etc.
     """
     def setProbabilities(self, nGram: NGram, level: int):
-        nGram.replaceUnknownWords(self.dictionary)
+        nGram.replaceUnknownWords(self.__dictionary)
         super().setProbabilities(nGram, level)
