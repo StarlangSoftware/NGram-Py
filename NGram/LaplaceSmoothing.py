@@ -6,7 +6,7 @@ class LaplaceSmoothing(SimpleSmoothing):
 
     __delta: float
 
-    def __init__(self, delta = 1.0):
+    def __init__(self, delta=1.0):
         self.__delta = delta
 
     """

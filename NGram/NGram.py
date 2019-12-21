@@ -27,7 +27,7 @@ class NGram:
     corpus : list
         list of sentences whose ngrams are added.
     """
-    def __init__(self, N: int, corpus = None):
+    def __init__(self, N: int, corpus=None):
         self.__N = N
         self.__vocabulary = set()
         self.__probabilityOfUnseen = []

@@ -28,7 +28,8 @@ class TrainedSmoothing(SimpleSmoothing):
     float
         new lower bound
     """
-    def newLowerBound(self, current: float, currentLowerBound: float, currentUpperBound: float, numberOfParts: int) -> float:
+    def newLowerBound(self, current: float, currentLowerBound: float,
+                      currentUpperBound: float, numberOfParts: int) -> float:
         if current != currentLowerBound:
             return current - (currentUpperBound - currentLowerBound) / numberOfParts
         else:
@@ -53,7 +54,8 @@ class TrainedSmoothing(SimpleSmoothing):
     float
         new upper bound
     """
-    def newUpperBound(self, current: float, currentLowerBound: float, currentUpperBound: float, numberOfParts: int) -> float:
+    def newUpperBound(self, current: float, currentLowerBound: float,
+                      currentUpperBound: float, numberOfParts: int) -> float:
         if current != currentUpperBound:
             return current + (currentUpperBound - currentLowerBound) / numberOfParts
         else:
