@@ -18,7 +18,8 @@ class NoSmoothingWithDictionary(NoSmoothing):
         self.__dictionary = dictionary
 
     """
-    Wrapper function to set the N-gram probabilities with no smoothing and replacing unknown words not found in {@link HashSet} the dictionary.
+    Wrapper function to set the N-gram probabilities with no smoothing and replacing unknown words not found in 
+    set the dictionary.
 
     PARAMETERS
     ----------

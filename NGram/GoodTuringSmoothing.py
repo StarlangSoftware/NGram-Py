@@ -60,8 +60,8 @@ class GoodTuringSmoothing(SimpleSmoothing):
         return N
 
     """
-    Wrapper function to set the N-gram probabilities with Good-Turing smoothing. N[1] / \sum_{i=1}^infty N_i is the out 
-    of vocabulary probability.
+    Wrapper function to set the N-gram probabilities with Good-Turing smoothing. N[1] / sum_{i=1}^infinity N_i is the 
+    out of vocabulary probability.
 
     PARAMETERS
     ----------

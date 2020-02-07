@@ -95,7 +95,8 @@ class InterpolatedSmoothing(TrainedSmoothing):
     tuple
         bestLambda1 and bestLambda2
     """
-    def learnBestLambdas(self, nGrams: list, kFoldCrossValidation: KFoldCrossValidation, lowerBound1: float, lowerBound2: float) -> tuple:
+    def learnBestLambdas(self, nGrams: list, kFoldCrossValidation: KFoldCrossValidation, lowerBound1: float,
+                         lowerBound2: float) -> tuple:
         upperBound1 = 0.999
         upperBound2 = 0.999
         bestPrevious = -1
