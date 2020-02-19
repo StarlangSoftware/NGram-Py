@@ -8,24 +8,24 @@ import math
 
 class GoodTuringSmoothing(SimpleSmoothing):
 
-    """
-    Given counts of counts, this function will calculate the estimated counts of counts c$^*$ with
-    Good-Turing smoothing. First, the algorithm filters the non-zero counts from counts of counts array and constructs
-    c and r arrays. Then it constructs Z_n array with Z_n = (2C_n / (r_{n+1} - r_{n-1})). The algorithm then uses
-    simple linear regression on Z_n values to estimate w_1 and w_0, where log(N[i]) = w_1log(i) + w_0
+    def __linearRegressionOnCountsOfCounts(self, countsOfCounts: list) -> list:
+        """
+        Given counts of counts, this function will calculate the estimated counts of counts c$^*$ with
+        Good-Turing smoothing. First, the algorithm filters the non-zero counts from counts of counts array and constructs
+        c and r arrays. Then it constructs Z_n array with Z_n = (2C_n / (r_{n+1} - r_{n-1})). The algorithm then uses
+        simple linear regression on Z_n values to estimate w_1 and w_0, where log(N[i]) = w_1log(i) + w_0
 
-    PARAMETERS
-    ----------
-    countsOfCounts : list
-        Counts of counts. countsOfCounts[1] is the number of words occurred once in the corpus. countsOfCounts[i] is
-        the number of words occurred i times in the corpus.
+        PARAMETERS
+        ----------
+        countsOfCounts : list
+            Counts of counts. countsOfCounts[1] is the number of words occurred once in the corpus. countsOfCounts[i] is
+            the number of words occurred i times in the corpus.
 
-    RETURNS
-    ------
-    list
-        Estimated counts of counts array. N[1] is the estimated count for out of vocabulary words.
-    """
-    def linearRegressionOnCountsOfCounts(self, countsOfCounts: list) -> list:
+        RETURNS
+        ------
+        list
+            Estimated counts of counts array. N[1] is the estimated count for out of vocabulary words.
+        """
         N = [0.0] * len(countsOfCounts)
         r = []
         c = []
@@ -59,21 +59,22 @@ class GoodTuringSmoothing(SimpleSmoothing):
             N[i] = math.exp(math.log(i) * w1 + w0)
         return N
 
-    """
-    Wrapper function to set the N-gram probabilities with Good-Turing smoothing. N[1] / sum_{i=1}^infinity N_i is the 
-    out of vocabulary probability.
-
-    PARAMETERS
-    ----------
-    nGram : NGram
-        N-Gram for which the probabilities will be set.
-    level : int
-        Level for which N-Gram probabilities will be set. Probabilities for different levels of the N-gram can be set 
-        with this function. If level = 1, N-Gram is treated as UniGram, if level = 2, N-Gram is treated as Bigram, etc.
-    """
     def setProbabilities(self, nGram: NGram, level: int):
+        """
+        Wrapper function to set the N-gram probabilities with Good-Turing smoothing. N[1] / sum_{i=1}^infinity N_i is
+        the out of vocabulary probability.
+
+        PARAMETERS
+        ----------
+        nGram : NGram
+            N-Gram for which the probabilities will be set.
+        level : int
+            Level for which N-Gram probabilities will be set. Probabilities for different levels of the N-gram can be
+            set with this function. If level = 1, N-Gram is treated as UniGram, if level = 2, N-Gram is treated as
+            Bigram, etc.
+        """
         countsOfCounts = nGram.calculateCountsOfCounts(level)
-        N = self.linearRegressionOnCountsOfCounts(countsOfCounts)
+        N = self.__linearRegressionOnCountsOfCounts(countsOfCounts)
         total = 0.0
         for r in range(1, len(countsOfCounts)):
             total += countsOfCounts[r] * r
