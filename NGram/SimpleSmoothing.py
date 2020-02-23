@@ -1,12 +1,11 @@
 from abc import abstractmethod
-from NGram.NGram import NGram
 
 
 class SimpleSmoothing:
 
     @abstractmethod
-    def setProbabilities(self, nGram: NGram, level: int):
+    def setProbabilities(self, nGram, level: int):
         pass
 
-    def setProbabilitiesGeneral(self, nGram: NGram):
+    def setProbabilitiesGeneral(self, nGram):
         self.setProbabilities(nGram, nGram.getN())

@@ -16,25 +16,47 @@ class NGram:
     __vocabulary: set
     __probabilityOfUnseen: list
 
-    def __init__(self, N: int, corpus=None):
+    def __init__(self, NorFileName, corpus=None):
         """
         Constructor of NGram class which takes a list corpus and Integer size of ngram as input.
         It adds all sentences of corpus as ngrams.
 
         PARAMETERS
         ----------
-        N : int
+        NorFileName
             size of ngram.
+            fileName
         corpus : list
             list of sentences whose ngrams are added.
         """
-        self.__N = N
-        self.__vocabulary = set()
-        self.__probabilityOfUnseen = []
-        self.rootNode = NGramNode(None)
-        if corpus is not None:
-            for i in range(len(corpus)):
-                self.addNGramSentence(corpus[i])
+        if isinstance(NorFileName, int):
+            self.__N = NorFileName
+            self.__vocabulary = set()
+            self.__probabilityOfUnseen = self.__N * [0.0]
+            self.__lambda1 = 0.0
+            self.__lambda2 = 0.0
+            self.rootNode = NGramNode(None)
+            if corpus is not None:
+                for i in range(len(corpus)):
+                    self.addNGramSentence(corpus[i])
+        else:
+            inputFile = open(NorFileName, mode="r", encoding="utf-8")
+            line = inputFile.readline().strip()
+            items = line.split()
+            self.__N = int(items[0])
+            self.__lambda1 = float(items[1])
+            self.__lambda2 = float(items[2])
+            self.__probabilityOfUnseen = self.__N * [0.0]
+            line = inputFile.readline().strip()
+            items = line.split()
+            for i in range(len(items)):
+                self.__probabilityOfUnseen[i] = float(items[i])
+            self.__vocabulary = set()
+            vocabularySize = int(inputFile.readline().strip())
+            for i in range(vocabularySize):
+                self.__vocabulary.add(inputFile.readline().strip())
+            self.rootNode = NGramNode(True, inputFile)
+            inputFile.close()
 
     def getN(self) -> int:
         """
@@ -483,3 +505,23 @@ class NGram:
         """
         self.rootNode.setAdjustedProbability(countsOfCounts, height, self.vocabularySize() + 1, pZero)
         self.__probabilityOfUnseen[height - 1] = 1.0 / (self.vocabularySize() + 1)
+
+    def saveAsText(self, fileName: str):
+        """
+        Save this NGram to a text file.
+
+        PARAMETERS
+        ----------
+        fileName : str
+            String name of file where NGram is saved.
+        """
+        outputFile = open(fileName, mode="w", encoding="utf8")
+        outputFile.write(self.__N.__str__() + " " + self.__lambda1.__str__() + " " + self.__lambda2.__str__() + "\n")
+        for p in self.__probabilityOfUnseen:
+            outputFile.write(p.__str__() + " ")
+        outputFile.write("\n")
+        outputFile.write(self.vocabularySize().__str__() + "\n")
+        for symbol in self.__vocabulary:
+            outputFile.write(symbol.__str__() + "\n")
+        self.rootNode.saveAsText(True, outputFile, 0)
+        outputFile.close()

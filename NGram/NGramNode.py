@@ -1,4 +1,7 @@
 from __future__ import annotations
+
+from io import TextIOWrapper
+
 from DataStructure.CounterHashMap import CounterHashMap
 import random
 
@@ -12,7 +15,7 @@ class NGramNode(object):
     __probabilityOfUnseen: float
     __unknown: NGramNode
 
-    def __init__(self, symbol):
+    def __init__(self, symbolOrIsRootNode, inputFile=None):
         """
         Constructor of NGramNode
 
@@ -21,9 +24,30 @@ class NGramNode(object):
         symbol
             symbol to be kept in this node.
         """
-        self.__symbol = symbol
-        self.__count = 0
-        self.__children = {}
+        self.__unknown = None
+        if not isinstance(symbolOrIsRootNode, bool):
+            self.__symbol = symbolOrIsRootNode
+            self.__count = 0
+            self.__probability = 0.0
+            self.__probabilityOfUnseen = 0.0
+            self.__children = {}
+        else:
+            if isinstance(symbolOrIsRootNode, bool) and inputFile is not None and isinstance(inputFile, TextIOWrapper):
+                if not symbolOrIsRootNode:
+                    self.__symbol = inputFile.readline().strip()
+                line = inputFile.readline().strip()
+                items = line.split()
+                self.__count = int(items[0])
+                self.__probability = float(items[1])
+                self.__probabilityOfUnseen = float(items[2])
+                numberOfChildren = int(items[3])
+                if numberOfChildren > 0:
+                    self.__children = {}
+                    for i in range(numberOfChildren):
+                        childNode = NGramNode(False, inputFile)
+                        self.__children[childNode.__symbol] = childNode
+                else:
+                    self.__children = {}
 
     def getCount(self) -> int:
         """
@@ -81,7 +105,7 @@ class NGramNode(object):
         """
         total = 0
         for child in self.__children.values():
-            total += child.count
+            total += child.__count
         if self.__unknown is not None:
             total += self.__unknown.__count
         return total
@@ -121,7 +145,7 @@ class NGramNode(object):
         if height == 1:
             total = self.childSum() + pseudoCount * vocabularySize
             for child in self.__children.values():
-                child.probability = (child.count + pseudoCount) / total
+                child.__probability = (child.__count + pseudoCount) / total
             if self.__unknown is not None:
                 self.__unknown.__probability = (self.__unknown.__count + pseudoCount) / total
             self.__probabilityOfUnseen = pseudoCount / total
@@ -151,19 +175,19 @@ class NGramNode(object):
         if height == 1:
             total = 0
             for child in self.__children.values():
-                r = child.count
+                r = child.__count
                 if r <= 5:
                     newR = ((r + 1) * N[r + 1]) / N[r]
                     total += newR
                 else:
                     total += r
             for child in self.__children.values():
-                r = child.count
+                r = child.__count
                 if r <= 5:
                     newR = ((r + 1) * N[r + 1]) / N[r]
-                    child.probability = (1 - pZero) * (newR / total)
+                    child.__probability = (1 - pZero) * (newR / total)
                 else:
-                    child.probability = (1 - pZero) * (r / total)
+                    child.__probability = (1 - pZero) * (r / total)
             self.__probabilityOfUnseen = pZero / (vocabularySize - len(self.__children))
         else:
             for child in self.__children.values():
@@ -209,7 +233,7 @@ class NGramNode(object):
             unigram probability of given symbol.
         """
         if w1 in self.__children:
-            return self.__children[w1].probability
+            return self.__children[w1].__probability
         elif self.__unknown is not None:
             return self.__unknown.__probability
         else:
@@ -298,8 +322,8 @@ class NGramNode(object):
             self.__unknown.__children = {}
             total = 0
             for child in childList:
-                self.__unknown.__children.update(child.children)
-                total += child.count
+                self.__unknown.__children.update(child.__children)
+                total += child.__count
                 del self.__children[child.symbol]
             self.__unknown.__count = total
             self.__unknown.replaceUnknownWords(dictionary)
@@ -349,10 +373,38 @@ class NGramNode(object):
         if index == len(s):
             prob = random.uniform(0, 1)
             for node in self.__children.values():
-                if prob < node.probability + total:
+                if prob < node.__probability + total:
                     return node.symbol
                 else:
-                    total += node.probability
+                    total += node.__probability
         else:
             return self.__children[s[index]].generateNextString(s, index + 1)
         return None
+
+    def saveAsText(self, isRootNode: bool, outputFile, level: int):
+        """
+        Save this NGramNode to a text file.
+
+        PARAMETERS
+        ----------
+        isRootNode: bool
+            True if this not is a root node, false otherwise
+        outputFile
+            file where NGram is saved.
+        level: int
+            Level of this node
+        """
+        if not isRootNode:
+            for i in range(level):
+                outputFile.write("\t")
+            outputFile.write(self.__symbol.__str__() + "\n")
+        for i in range(level):
+            outputFile.write("\t")
+        if len(self.__children) > 0:
+            outputFile.write(self.__count.__str__() + " " + self.__probability.__str__() + " " +
+                             self.__probabilityOfUnseen.__str__() + " " + self.size().__str__() + "\n")
+            for child in self.__children.values():
+                child.saveAsText(False, outputFile, level + 1)
+        else:
+            outputFile.write(self.__count.__str__() + " " + self.__probability.__str__() + " " +
+                             self.__probabilityOfUnseen.__str__() + " 0\n")

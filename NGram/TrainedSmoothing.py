@@ -1,6 +1,5 @@
 from abc import abstractmethod
 from NGram.SimpleSmoothing import SimpleSmoothing
-from NGram.NGram import NGram
 
 
 class TrainedSmoothing(SimpleSmoothing):
@@ -61,7 +60,7 @@ class TrainedSmoothing(SimpleSmoothing):
         else:
             return current * numberOfParts
 
-    def train(self, corpus: list, nGram: NGram):
+    def train(self, corpus: list, nGram):
         """
         Wrapper function to learn parameters of the smoothing method and set the N-gram probabilities.
 
