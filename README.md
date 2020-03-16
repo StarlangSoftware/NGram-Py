@@ -62,57 +62,56 @@ Detailed Description
      
 Boş bir NGram modeli oluşturmak için
 
-	NGram(int N)
+	NGram(N: int)
 
 Örneğin,
 
-	a = NGram(2);
+	a = NGram(2)
 
 boş bir bigram modeli oluşturulmaktadır.
 
 NGram'a bir cümle eklemek için
 
-	void addNGramSentence(Symbol[] symbols)
+	addNGramSentence(self, symbols: list)
 
 Örneğin,
 
-	String[] text1 = {"ali", "topu", "at", "mehmet", "ayşe", "gitti"};
-	String[] text2 = {"ali", "top", "at", "ayşe", "gitti"};
-	nGram = new NGram<String>(2);
-	nGram.addNGramSentence(text1);
-	nGram.addNGramSentence(text2);
+	nGram = NGram(2)
+	nGram.addNGramSentence(["ali", "topu", "at", "mehmet", "ayşe", "gitti"])
+	nGram.addNGramSentence(["ali", "top", "at", "ayşe", "gitti"])
 
-satırları ile boş bir bigram oluşturulup, text1 ve text2 cümleleri bigram modeline 
+
+satırları ile boş bir bigram oluşturulup, iki cümle bigram modeline 
 eklenir.
 
 NoSmoothing sınıfı smoothing için kullanılan en basit tekniktir. Eğitim gerektirmez, sadece
 sayaçlar kullanılarak olasılıklar hesaplanır. Örneğin verilen bir NGram'ın NoSmoothing ile 
 olasılıklarının hesaplanması için
 
-	a.calculateNGramProbabilities(new NoSmoothing());
+	a.calculateNGramProbabilities(NoSmoothing())
 
 LaplaceSmoothing sınıfı smoothing için kullanılan basit bir yumuşatma tekniğidir. Eğitim 
 gerektirmez, her sayaca 1 eklenerek olasılıklar hesaplanır. Örneğin verilen bir NGram'ın 
 LaplaceSmoothing ile olasılıklarının hesaplanması için
 
-	a.calculateNGramProbabilities(new LaplaceSmoothing());
+	a.calculateNGramProbabilities(LaplaceSmoothing())
 
 GoodTuringSmoothing sınıfı smoothing için kullanılan eğitim gerektirmeyen karmaşık bir 
 yumuşatma tekniğidir. Verilen bir NGram'ın GoodTuringSmoothing ile olasılıklarının 
 hesaplanması için
 
-	a.calculateNGramProbabilities(new GoodTuringSmoothing());
+	a.calculateNGramProbabilities(GoodTuringSmoothing())
 
 AdditiveSmoothing sınıfı smoothing için kullanılan eğitim gerektiren bir yumuşatma 
 tekniğidir.
 
-	a.calculateNGramProbabilities(new AdditiveSmoothing());
+	a.calculateNGramProbabilities(AdditiveSmoothing())
 
 ## Using NGram
 
 Bir NGram'ın olasılığını bulmak için
 
-	double getProbability(Symbol ... symbols)
+	getProbability(self, *args) -> float
 
 Örneğin, bigram olasılığını bulmak için
 
@@ -126,7 +125,7 @@ trigram olasılığını bulmak için
     
 NGram modelini kaydetmek için
 
-	void saveAsText(String fileName)
+	saveAsText(self, fileName: str)
 
 Örneğin, a modelini "model.txt" dosyasına kaydetmek için
 
@@ -136,11 +135,11 @@ NGram modelini kaydetmek için
 
 Var olan bir NGram modelini yüklemek için
 
-	NGram(String fileName)
+	NGram(fileName: str)
 
 Örneğin,
 
-	a = NGram("model.txt");
+	a = NGram("model.txt")
 
 model.txt dosyasında bulunan bir NGram modelini yükler.
 
