@@ -333,12 +333,18 @@ class NGram:
         if self.__N == 1:
             return self.__getUniGramProbability(args[0])
         elif self.__N == 2:
+            if len(args) == 1:
+                return self.__getUniGramProbability(args[0])
             if self.__interpolated:
                 return self.__lambda1 * self.__getBiGramProbability(args[0], args[1]) + (1 - self.__lambda1) \
                        * self.__getUniGramProbability(args[1])
             else:
                 return self.__getBiGramProbability(args[0], args[1])
         elif self.__N == 3:
+            if len(args) == 1:
+                return self.__getUniGramProbability(args[0])
+            elif len(args) == 2:
+                return self.__getBiGramProbability(args[0], args[1])
             if self.__interpolated:
                 return self.__lambda1 * self.__getTriGramProbability(args[0], args[1], args[2]) + \
                        self.__lambda2 * self.__getBiGramProbability(args[1], args[2]) + \
