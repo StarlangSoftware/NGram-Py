@@ -21,7 +21,7 @@ class NGramNode(object):
 
         PARAMETERS
         ----------
-        symbol
+        symbolOrIsRootNode
             symbol to be kept in this node.
         """
         self.__unknown = None
@@ -193,7 +193,7 @@ class NGramNode(object):
             for child in self.__children.values():
                 child.setAdjustedProbability(N, height - 1, vocabularySize, pZero)
 
-    def addNGram(self, s: list, index: int, height: int):
+    def addNGram(self, s: list, index: int, height: int, sentenceCount: int = 1):
         """
         Adds NGram given as array of symbols to the node as a child.
 
@@ -206,6 +206,8 @@ class NGramNode(object):
         height : int
             height for NGram. if height = 1, If level = 1, N-Gram is treated as UniGram, if level = 2, N-Gram is treated
             as Bigram, etc.
+        sentenceCount : int
+            Number of times this sentence is added.
         """
         if height == 0:
             return
@@ -215,8 +217,8 @@ class NGramNode(object):
         else:
             child = NGramNode(symbol)
             self.__children[symbol] = child
-        child.__count += 1
-        child.addNGram(s, index + 1, height - 1)
+        child.__count += sentenceCount
+        child.addNGram(s, index + 1, height - 1, sentenceCount)
 
     def getUniGramProbability(self, w1) -> float:
         """
@@ -306,7 +308,8 @@ class NGramNode(object):
     def replaceUnknownWords(self, dictionary: set):
         """
         Replace words not in given dictionary.
-        Deletes unknown words from children nodes and adds them to NGramNode#unknown unknown node as children recursively.
+        Deletes unknown words from children nodes and adds them to NGramNode#unknown unknown node as children
+        recursively.
 
         PARAMETERS
         ----------

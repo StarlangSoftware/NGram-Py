@@ -78,7 +78,7 @@ class NGram:
         """
         self.__N = N
 
-    def addNGramSentence(self, symbols: list):
+    def addNGramSentence(self, symbols: list, sentenceCount: int = 1):
         """
         Adds given sentence to set the vocabulary and create and add ngrams of the sentence to NGramNode the rootNode
 
@@ -86,11 +86,13 @@ class NGram:
         ----------
         symbols : list
             Sentence whose ngrams are added.
+        sentenceCount : int
+            Number of times this sentence is added.
         """
         for s in symbols:
             self.__vocabulary.add(s)
         for j in range(len(symbols) - self.__N + 1):
-            self.rootNode.addNGram(symbols, j, self.__N)
+            self.rootNode.addNGram(symbols, j, self.__N, sentenceCount)
 
     def addNGram(self, symbols: list):
         """
