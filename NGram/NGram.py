@@ -35,6 +35,7 @@ class NGram:
             self.__probabilityOfUnseen = self.__N * [0.0]
             self.__lambda1 = 0.0
             self.__lambda2 = 0.0
+            self.__interpolated = False
             self.rootNode = NGramNode(None)
             if corpus is not None:
                 for i in range(len(corpus)):
@@ -47,6 +48,7 @@ class NGram:
             self.__lambda1 = float(items[1])
             self.__lambda2 = float(items[2])
             self.__probabilityOfUnseen = self.__N * [0.0]
+            self.__interpolated = False
             line = inputFile.readline().strip()
             items = line.split()
             for i in range(len(items)):
