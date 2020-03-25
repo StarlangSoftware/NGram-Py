@@ -259,7 +259,7 @@ class NGramNode(object):
         """
         if w1 in self.__children:
             child = self.__children[w1]
-            return child.__getUniGramProbability(w2)
+            return child.getUniGramProbability(w2)
         elif self.__unknown is not None:
             return self.__unknown.getUniGramProbability(w2)
 
@@ -283,7 +283,7 @@ class NGramNode(object):
         """
         if w1 in self.__children:
             child = self.__children[w1]
-            return child.__getBiGramProbability(w2, w3)
+            return child.getBiGramProbability(w2, w3)
         elif self.__unknown is not None:
             return self.__unknown.getBiGramProbability(w2, w3)
 
