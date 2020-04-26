@@ -1,10 +1,8 @@
 # NGram
 
-
 For Developers
 ============
-You can also see either [Java](https://github.com/olcaytaner/NGram) 
-or [C++](https://github.com/olcaytaner/NGram-CPP) repository.
+You can also see [Java](https://github.com/olcaytaner/NGram), [C++](https://github.com/olcaytaner/NGram-CPP), or [C#](https://github.com/olcaytaner/NGram-CS) repository.
 
 ## Requirements
 
