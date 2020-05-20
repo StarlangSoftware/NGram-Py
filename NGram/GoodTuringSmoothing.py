@@ -34,12 +34,11 @@ class GoodTuringSmoothing(SimpleSmoothing):
                 r.append(i)
                 c.append(countsOfCounts[i])
         A = Matrix(2, 2)
-        y = Vector()
-        y.initAllSame(2, 0)
+        y = Vector(2, 0)
         for i in range(len(r)):
             xt = math.log(r[i])
             if i == 0:
-                rt = math.log(r[i])
+                rt = math.log(c[i])
             else:
                 if i == len(r) - 1:
                     rt = math.log((1.0 * c[i]) / (r[i] - r[i - 1]))

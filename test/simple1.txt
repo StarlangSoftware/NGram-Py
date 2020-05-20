@@ -1,0 +1,49 @@
+1 0.0 0.0
+0.0 
+15
+topu
+<s>
+ver
+</s>
+mehmete
+ayşeyle
+ayşeye
+eve
+top
+kitabı
+mehmet
+ali
+gitti
+ayşe
+at
+0 0.0 0.0 15
+	<s>
+	5 0.0 0.0 0
+	ali
+	4 0.0 0.0 0
+	topu
+	3 0.0 0.0 0
+	at
+	4 0.0 0.0 0
+	mehmet
+	2 0.0 0.0 0
+	ayşeye
+	1 0.0 0.0 0
+	gitti
+	3 0.0 0.0 0
+	</s>
+	5 0.0 0.0 0
+	top
+	1 0.0 0.0 0
+	ayşe
+	2 0.0 0.0 0
+	eve
+	1 0.0 0.0 0
+	kitabı
+	1 0.0 0.0 0
+	ver
+	1 0.0 0.0 0
+	mehmete
+	1 0.0 0.0 0
+	ayşeyle
+	1 0.0 0.0 0

@@ -91,7 +91,7 @@ class NGramNode(object):
             return self.__count
         else:
             for child in self.__children.values():
-                current = child.__maximumOccurence(height - 1)
+                current = child.maximumOccurence(height - 1)
                 if current > maxValue:
                     maxValue = current
             return maxValue
@@ -126,7 +126,7 @@ class NGramNode(object):
             countsOfCounts[self.__count] = countsOfCounts[self.__count] + 1
         else:
             for child in self.__children.values():
-                child.__updateCountsOfCounts(countsOfCounts, height - 1)
+                child.updateCountsOfCounts(countsOfCounts, height - 1)
 
     def setProbabilityWithPseudoCount(self, pseudoCount: float, height: int, vocabularySize: float):
         """
@@ -262,6 +262,8 @@ class NGramNode(object):
             return child.getUniGramProbability(w2)
         elif self.__unknown is not None:
             return self.__unknown.getUniGramProbability(w2)
+        else:
+            return None
 
     def getTriGramProbability(self, w1, w2, w3) -> float:
         """
@@ -286,6 +288,8 @@ class NGramNode(object):
             return child.getBiGramProbability(w2, w3)
         elif self.__unknown is not None:
             return self.__unknown.getBiGramProbability(w2, w3)
+        else:
+            return None
 
     def countWords(self, wordCounter: CounterHashMap, height: int):
         """

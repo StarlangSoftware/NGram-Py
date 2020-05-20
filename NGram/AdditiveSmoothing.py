@@ -86,3 +86,14 @@ class AdditiveSmoothing(TrainedSmoothing):
             Bigram, etc.
         """
         nGram.setProbabilityWithPseudoCount(self.__delta, level)
+
+    def getDelta(self) -> float:
+        """
+        Gets the best delta.
+
+        RETURNS
+        -------
+        float
+            learned best delta
+        """
+        return self.__delta

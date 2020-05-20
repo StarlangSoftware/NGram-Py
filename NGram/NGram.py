@@ -390,7 +390,11 @@ class NGram:
         float
             probability of bigram formed by w1 and w2.
         """
-        return self.rootNode.getBiGramProbability(w1, w2)
+        probability = self.rootNode.getBiGramProbability(w1, w2)
+        if probability is not None:
+            return probability
+        else:
+            return self.__probabilityOfUnseen[1]
 
     def __getTriGramProbability(self, w1, w2, w3) -> float:
         """
@@ -410,7 +414,11 @@ class NGram:
         float
             probability of trigram formed by w1, w2, w3.
         """
-        return self.rootNode.getTriGramProbability(w1, w2, w3)
+        probability = self.rootNode.getTriGramProbability(w1, w2, w3)
+        if probability is not None:
+            return probability
+        else:
+            return self.__probabilityOfUnseen[2]
 
     def getCount(self, symbols: list) -> int:
         """
@@ -445,7 +453,10 @@ class NGram:
         else:
             vocabularySize = self.vocabularySize()
         self.rootNode.setProbabilityWithPseudoCount(pseudoCount, height, vocabularySize)
-        self.__probabilityOfUnseen[height - 1] = 1.0 / vocabularySize
+        if pseudoCount != 0:
+            self.__probabilityOfUnseen[height - 1] = 1.0 / vocabularySize
+        else:
+            self.__probabilityOfUnseen[height - 1] = 0.0
 
     def __maximumOccurence(self, height: int) -> int:
         """

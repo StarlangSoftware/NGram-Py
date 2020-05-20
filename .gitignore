@@ -3,3 +3,11 @@
 /dist/
 /bin/
 /.idea/
+__pycache__/TestNGram.cpython-37.pyc
+NGram/__pycache__/__init__.cpython-37.pyc
+NGram/__pycache__/LaplaceSmoothing.cpython-37.pyc
+NGram/__pycache__/NGram.cpython-37.pyc
+NGram/__pycache__/NGramNode.cpython-37.pyc
+NGram/__pycache__/NoSmoothing.cpython-37.pyc
+NGram/__pycache__/SimpleSmoothing.cpython-37.pyc
+NGram/__pycache__/TrainedSmoothing.cpython-37.pyc
