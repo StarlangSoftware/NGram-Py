@@ -2,7 +2,7 @@
 
 For Developers
 ============
-You can also see [Java](https://github.com/olcaytaner/NGram), [C++](https://github.com/olcaytaner/NGram-CPP), or [C#](https://github.com/olcaytaner/NGram-CS) repository.
+You can also see [Java](https://github.com/starlangsoftware/NGram), [C++](https://github.com/starlangsoftware/NGram-CPP), or [C#](https://github.com/starlangsoftware/NGram-CS) repository.
 
 ## Requirements
 
@@ -30,7 +30,7 @@ Use Git for cloning the code to your local or below line for Ubuntu:
 
 A directory called NGram will be created. Or you can use below link for exploring the code:
 
-	git clone https://github.com/olcaytaner/NGram-Py.git
+	git clone https://github.com/starlangsoftware/NGram-Py.git
 
 ## Open project with Pycharm IDE
 
@@ -41,13 +41,6 @@ Steps for opening the cloned project:
 * Choose `NGram-PY` file
 * Select open as project option
 * Couple of seconds, dependencies will be downloaded. 
-
-
-## Compile
-
-**From IDE**
-
-After being done with the downloading and indexing, select **Build Project** option from **Build** menu. After compilation process, user can run NGram.
 
 Detailed Description
 ============
