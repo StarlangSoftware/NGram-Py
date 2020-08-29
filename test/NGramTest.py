@@ -4,7 +4,7 @@ from NGram.NGram import NGram
 from test.CorpusTest import CorpusTest
 
 
-class MyTestCase(CorpusTest, unittest.TestCase):
+class NGramTest(CorpusTest, unittest.TestCase):
 
     simpleUniGram: NGram
     simpleBiGram: NGram
