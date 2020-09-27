@@ -109,7 +109,7 @@ class NGram:
             self.__vocabulary.add(s)
         self.rootNode.addNGram(symbols, 0, self.__N)
 
-    def vocabularySize(self):
+    def vocabularySize(self) -> int:
         """
         RETURNS
         -------

@@ -60,7 +60,7 @@ class InterpolatedSmoothing(TrainedSmoothing):
             while value <= upperBound:
                 perplexity = 0
                 for i in range(10):
-                    nGrams[i].setLambda(value)
+                    nGrams[i].setLambda2(value)
                     perplexity += nGrams[i].getPerplexity(testFolds[i])
                 if perplexity < bestPerplexity:
                     bestPerplexity = perplexity
@@ -114,7 +114,7 @@ class InterpolatedSmoothing(TrainedSmoothing):
                 while value2 <= upperBound2 and value1 + value2 < 1:
                     perplexity = 0
                     for i in range(10):
-                        nGrams[i].setLambda(value1, value2)
+                        nGrams[i].setLambda3(value1, value2)
                         perplexity += nGrams[i].getPerplexity(testFolds[i])
                     if perplexity < bestPerplexity:
                         bestPerplexity = perplexity
