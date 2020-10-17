@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 from io import TextIOWrapper
-
 from DataStructure.CounterHashMap import CounterHashMap
+from NGram.MultipleFile import MultipleFile
 import random
 
 
@@ -32,22 +32,39 @@ class NGramNode(object):
             self.__probabilityOfUnseen = 0.0
             self.__children = {}
         else:
-            if isinstance(symbolOrIsRootNode, bool) and inputFile is not None and isinstance(inputFile, TextIOWrapper):
-                if not symbolOrIsRootNode:
-                    self.__symbol = inputFile.readline().strip()
-                line = inputFile.readline().strip()
-                items = line.split()
-                self.__count = int(items[0])
-                self.__probability = float(items[1])
-                self.__probabilityOfUnseen = float(items[2])
-                numberOfChildren = int(items[3])
-                if numberOfChildren > 0:
-                    self.__children = {}
-                    for i in range(numberOfChildren):
-                        childNode = NGramNode(False, inputFile)
-                        self.__children[childNode.__symbol] = childNode
-                else:
-                    self.__children = {}
+            if isinstance(symbolOrIsRootNode, bool) and inputFile is not None:
+                if isinstance(inputFile, TextIOWrapper):
+                    if not symbolOrIsRootNode:
+                        self.__symbol = inputFile.readline().strip()
+                    line = inputFile.readline().strip()
+                    items = line.split()
+                    self.__count = int(items[0])
+                    self.__probability = float(items[1])
+                    self.__probabilityOfUnseen = float(items[2])
+                    numberOfChildren = int(items[3])
+                    if numberOfChildren > 0:
+                        self.__children = {}
+                        for i in range(numberOfChildren):
+                            childNode = NGramNode(False, inputFile)
+                            self.__children[childNode.__symbol] = childNode
+                    else:
+                        self.__children = {}
+                elif isinstance(inputFile, MultipleFile):
+                    if not symbolOrIsRootNode:
+                        self.__symbol = inputFile.readLine().strip()
+                    line = inputFile.readLine().strip()
+                    items = line.split()
+                    self.__count = int(items[0])
+                    self.__probability = float(items[1])
+                    self.__probabilityOfUnseen = float(items[2])
+                    numberOfChildren = int(items[3])
+                    if numberOfChildren > 0:
+                        self.__children = {}
+                        for i in range(numberOfChildren):
+                            childNode = NGramNode(False, inputFile)
+                            self.__children[childNode.__symbol] = childNode
+                    else:
+                        self.__children = {}
 
     def getCount(self) -> int:
         """

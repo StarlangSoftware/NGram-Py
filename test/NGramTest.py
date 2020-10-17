@@ -70,6 +70,16 @@ class NGramTest(CorpusTest, unittest.TestCase):
         self.simpleBiGram.saveAsText("simple2.txt")
         self.simpleTriGram.saveAsText("simple3.txt")
 
+    def test_LoadMultiPart(self):
+        self.simpleUniGram = NGram(1)
+        self.simpleUniGram.initWithMultipleFile("simple1part1.txt", "simple1part2.txt")
+        self.simpleBiGram = NGram(2)
+        self.simpleBiGram.initWithMultipleFile("simple2part1.txt", "simple2part2.txt", "simple2part3.txt")
+        self.simpleTriGram = NGram(3)
+        self.simpleTriGram.initWithMultipleFile("simple3part1.txt", "simple3part2.txt", "simple3part3.txt", "simple3part4.txt")
+        self.test_GetCountSimple()
+        self.test_VocabularySizeSimple()
+
 
 if __name__ == '__main__':
     unittest.main()

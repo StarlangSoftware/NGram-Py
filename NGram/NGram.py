@@ -3,6 +3,7 @@ from DataStructure.CounterHashMap import CounterHashMap
 from NGram.NGramNode import NGramNode
 from NGram.SimpleSmoothing import SimpleSmoothing
 from NGram.TrainedSmoothing import TrainedSmoothing
+from NGram.MultipleFile import MultipleFile
 import math
 
 
@@ -59,6 +60,25 @@ class NGram:
                 self.__vocabulary.add(inputFile.readline().strip())
             self.rootNode = NGramNode(True, inputFile)
             inputFile.close()
+
+    def initWithMultipleFile(self, *args):
+        multipleFile = MultipleFile(list(args))
+        line = multipleFile.readLine().strip()
+        items = line.split()
+        self.__N = int(items[0])
+        self.__lambda1 = float(items[1])
+        self.__lambda2 = float(items[2])
+        self.__probabilityOfUnseen = self.__N * [0.0]
+        self.__interpolated = False
+        line = multipleFile.readLine().strip()
+        items = line.split()
+        for i in range(len(items)):
+            self.__probabilityOfUnseen[i] = float(items[i])
+        self.__vocabulary = set()
+        vocabularySize = int(multipleFile.readLine().strip())
+        for i in range(vocabularySize):
+            self.__vocabulary.add(multipleFile.readLine().strip())
+        self.rootNode = NGramNode(True, multipleFile)
 
     def getN(self) -> int:
         """
