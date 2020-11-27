@@ -405,6 +405,18 @@ class NGramNode(object):
             return self.__children[s[index]].generateNextString(s, index + 1)
         return None
 
+    def prune(self, threshold: float, N: int):
+        if N == 0:
+            toBeDeleted = []
+            for symbol in self.__children.keys():
+                if self.__children[symbol].__count / self.__count < threshold:
+                    toBeDeleted.append(symbol)
+            for symbol in toBeDeleted:
+                self.__children.pop(symbol)
+        else:
+            for node in self.__children.values():
+                node.prune(threshold, N - 1)
+
     def saveAsText(self, isRootNode: bool, outputFile, level: int):
         """
         Save this NGramNode to a text file.

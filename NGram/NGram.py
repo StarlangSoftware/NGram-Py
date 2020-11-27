@@ -547,6 +547,10 @@ class NGram:
         self.rootNode.setAdjustedProbability(countsOfCounts, height, self.vocabularySize() + 1, pZero)
         self.__probabilityOfUnseen[height - 1] = 1.0 / (self.vocabularySize() + 1)
 
+    def prune(self, threshold: float):
+        if threshold > 0.0 and threshold <= 1.0:
+            self.rootNode.prune(threshold, self.__N - 1)
+
     def saveAsText(self, fileName: str):
         """
         Save this NGram to a text file.
