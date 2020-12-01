@@ -83,12 +83,12 @@ class NGramTest(CorpusTest, unittest.TestCase):
         self.simpleBiGram.prune(0.7)
         self.assertEqual(4, self.simpleBiGram.getCount(["<s>", "ali"]), 0.0)
         self.assertEqual(3, self.simpleBiGram.getCount(["ali", "topu"]), 0.0)
-        self.assertEqual(0, self.simpleBiGram.getCount(["topu", "at"]), 0.0)
+        self.assertEqual(2, self.simpleBiGram.getCount(["topu", "at"]), 0.0)
         self.simpleBiGram.prune(0.8)
         self.assertEqual(4, self.simpleBiGram.getCount(["<s>", "ali"]), 0.0)
-        self.assertEqual(0, self.simpleBiGram.getCount(["ali", "topu"]), 0.0)
+        self.assertEqual(3, self.simpleBiGram.getCount(["ali", "topu"]), 0.0)
         self.simpleBiGram.prune(0.9)
-        self.assertEqual(0, self.simpleBiGram.getCount(["<s>", "ali"]), 0.0)
+        self.assertEqual(4, self.simpleBiGram.getCount(["<s>", "ali"]), 0.0)
         
     def test_SaveAsText(self):
         self.simpleUniGram.saveAsText("simple1.txt")

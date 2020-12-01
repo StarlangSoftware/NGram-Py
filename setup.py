@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='NlpToolkit-NGram',
-    version='1.0.13',
+    version='1.0.14',
     packages=['NGram', 'test'],
     url='https://github.com/olcaytaner/NGram-Py',
     license='',

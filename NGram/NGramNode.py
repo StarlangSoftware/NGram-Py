@@ -407,12 +407,19 @@ class NGramNode(object):
 
     def prune(self, threshold: float, N: int):
         if N == 0:
+            maxElement = None
+            maxNode = None
             toBeDeleted = []
             for symbol in self.__children.keys():
                 if self.__children[symbol].__count / self.__count < threshold:
                     toBeDeleted.append(symbol)
+                if maxElement is None or self.__children[symbol].__count > self.__children[maxElement].__count:
+                    maxElement = symbol
+                    maxNode = self.__children[symbol]
             for symbol in toBeDeleted:
                 self.__children.pop(symbol)
+            if len(self.__children) == 0:
+                self.__children[maxElement] = maxNode
         else:
             for node in self.__children.values():
                 node.prune(threshold, N - 1)
