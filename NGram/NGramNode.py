@@ -66,6 +66,15 @@ class NGramNode(object):
                     else:
                         self.__children = {}
 
+    def merge(self, toBeMerged: NGramNode):
+        for symbol in self.__children:
+            if symbol in toBeMerged.__children:
+                self.__children[symbol].merge(toBeMerged.__children[symbol])
+        for symbol in toBeMerged.__children:
+            if symbol not in self.__children:
+                self.__children[symbol] = toBeMerged.__children[symbol]
+        self.__count = self.__count + toBeMerged.getCount()
+
     def getCount(self) -> int:
         """
         Gets count of this node.

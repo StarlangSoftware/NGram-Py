@@ -95,6 +95,20 @@ class NGramTest(CorpusTest, unittest.TestCase):
         self.simpleBiGram.saveAsText("simple2.txt")
         self.simpleTriGram.saveAsText("simple3.txt")
 
+    def test_Merge(self):
+        self.simpleUniGram = NGram("simple1a.txt")
+        self.simpleUniGram.merge(NGram("simple1b.txt"))
+        self.assertEqual(18, self.simpleUniGram.vocabularySize())
+        self.simpleBiGram = NGram("simple2a.txt")
+        self.simpleBiGram.merge(NGram("simple2b.txt"))
+        self.simpleBiGram.merge(NGram("simple2c.txt"))
+        self.simpleBiGram.merge(NGram("simple2d.txt"))
+        self.assertEqual(21, self.simpleBiGram.vocabularySize())
+        self.simpleTriGram = NGram("simple3a.txt")
+        self.simpleTriGram.merge(NGram("simple3b.txt"))
+        self.simpleTriGram.merge(NGram("simple3c.txt"))
+        self.assertEqual(20, self.simpleTriGram.vocabularySize())
+
     def test_LoadMultiPart(self):
         self.simpleUniGram = NGram(1)
         self.simpleUniGram.initWithMultipleFile("simple1part1.txt", "simple1part2.txt")

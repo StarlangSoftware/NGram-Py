@@ -1,3 +1,4 @@
+from __future__ import annotations
 from DataStructure.CounterHashMap import CounterHashMap
 
 from NGram.NGramNode import NGramNode
@@ -79,6 +80,12 @@ class NGram:
         for i in range(vocabularySize):
             self.__vocabulary.add(multipleFile.readLine().strip())
         self.rootNode = NGramNode(True, multipleFile)
+
+    def merge(self, toBeMerged: NGram):
+        if self.__N != toBeMerged.getN():
+            return
+        self.__vocabulary.update(toBeMerged.__vocabulary)
+        self.rootNode.merge(toBeMerged.rootNode)
 
     def getN(self) -> int:
         """
