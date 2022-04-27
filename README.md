@@ -1,4 +1,4 @@
-N-Gram [<img src="https://github.com/StarlangSoftware/NGram/blob/master/video1.jpg" width="5%">](https://youtu.be/oNWKVUdPUJY)[<img src="https://github.com/StarlangSoftware/NGram/blob/master/video2.jpg" width="5%">](https://youtu.be/ZG5m6OFdudI)
+N-Gram
 ============
 
 An N-gram is a sequence of N words: a 2-gram (or bigram) is a two-word sequence of words like “lütfen ödevinizi”, “ödevinizi çabuk”, or ”çabuk veriniz”, and a 3-gram (or trigram) is a three-word sequence of words like “lütfen ödevinizi çabuk”, or “ödevinizi çabuk veriniz”.
@@ -14,6 +14,11 @@ The simplest way to do smoothing is to add one to all the bigram counts, before 
 ### Add-k Smoothing
 
 One alternative to add-one smoothing is to move a bit less of the probability mass from the seen to the unseen events. Instead of adding 1 to each count, we add a fractional count k. This algorithm is therefore called add-k smoothing.
+
+Video Lectures
+============
+
+[<img src="https://github.com/StarlangSoftware/NGram/blob/master/video1.jpg" width="50%">](https://youtu.be/oNWKVUdPUJY)[<img src="https://github.com/StarlangSoftware/NGram/blob/master/video2.jpg" width="50%">](https://youtu.be/ZG5m6OFdudI)
 
 For Developers
 ============
