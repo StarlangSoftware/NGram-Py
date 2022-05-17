@@ -2,11 +2,11 @@ from setuptools import setup
 
 from pathlib import Path
 this_directory = Path(__file__).parent
-long_description = (this_directory / "README.md").read_text()
+long_description = (this_directory / "README.md").read_text(encoding="utf-8")
 
 setup(
     name='NlpToolkit-NGram',
-    version='1.0.17',
+    version='1.0.18',
     packages=['NGram', 'test'],
     url='https://github.com/StarlangSoftware/NGram-Py',
     license='',
