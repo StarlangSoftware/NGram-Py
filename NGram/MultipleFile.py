@@ -1,25 +1,25 @@
 class MultipleFile:
 
-    index: int
-    fileNameList: list
-    lines: list
-    lineIndex: int
+    __index: int
+    __file_name_list: list
+    __lines: list
+    __line_index: int
 
     def __init__(self, fileList: list):
-        self.fileNameList = fileList
-        file = open(self.fileNameList[0])
-        self.lines = file.readlines()
+        self.__file_name_list = fileList
+        file = open(self.__file_name_list[0])
+        self.__lines = file.readlines()
         file.close()
-        self.lineIndex = 0
-        self.index = 0
+        self.__line_index = 0
+        self.__index = 0
 
     def readLine(self) -> str:
-        if self.lineIndex == len(self.lines):
-            self.index = self.index + 1
-            file = open(self.fileNameList[self.index])
-            self.lines = file.readlines()
+        if self.__line_index == len(self.__lines):
+            self.__index = self.__index + 1
+            file = open(self.__file_name_list[self.__index])
+            self.__lines = file.readlines()
             file.close()
-            self.lineIndex = 0
-        line = self.lines[self.lineIndex]
-        self.lineIndex = self.lineIndex + 1
+            self.__line_index = 0
+        line = self.__lines[self.__line_index]
+        self.__line_index = self.__line_index + 1
         return line

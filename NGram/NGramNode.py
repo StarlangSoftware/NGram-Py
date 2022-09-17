@@ -12,10 +12,12 @@ class NGramNode(object):
     __symbol: object
     __count: int
     __probability: float
-    __probabilityOfUnseen: float
+    __probability_of_unseen: float
     __unknown: NGramNode
 
-    def __init__(self, symbolOrIsRootNode, inputFile=None):
+    def __init__(self,
+                 symbolOrIsRootNode,
+                 inputFile=None):
         """
         Constructor of NGramNode
 
@@ -29,7 +31,7 @@ class NGramNode(object):
             self.__symbol = symbolOrIsRootNode
             self.__count = 0
             self.__probability = 0.0
-            self.__probabilityOfUnseen = 0.0
+            self.__probability_of_unseen = 0.0
             self.__children = {}
         else:
             if isinstance(symbolOrIsRootNode, bool) and inputFile is not None:
@@ -40,13 +42,13 @@ class NGramNode(object):
                     items = line.split()
                     self.__count = int(items[0])
                     self.__probability = float(items[1])
-                    self.__probabilityOfUnseen = float(items[2])
-                    numberOfChildren = int(items[3])
-                    if numberOfChildren > 0:
+                    self.__probability_of_unseen = float(items[2])
+                    number_of_children = int(items[3])
+                    if number_of_children > 0:
                         self.__children = {}
-                        for i in range(numberOfChildren):
-                            childNode = NGramNode(False, inputFile)
-                            self.__children[childNode.__symbol] = childNode
+                        for i in range(number_of_children):
+                            child_node = NGramNode(False, inputFile)
+                            self.__children[child_node.__symbol] = child_node
                     else:
                         self.__children = {}
                 elif isinstance(inputFile, MultipleFile):
@@ -56,13 +58,13 @@ class NGramNode(object):
                     items = line.split()
                     self.__count = int(items[0])
                     self.__probability = float(items[1])
-                    self.__probabilityOfUnseen = float(items[2])
-                    numberOfChildren = int(items[3])
-                    if numberOfChildren > 0:
+                    self.__probability_of_unseen = float(items[2])
+                    number_of_children = int(items[3])
+                    if number_of_children > 0:
                         self.__children = {}
-                        for i in range(numberOfChildren):
-                            childNode = NGramNode(False, inputFile)
-                            self.__children[childNode.__symbol] = childNode
+                        for i in range(number_of_children):
+                            child_node = NGramNode(False, inputFile)
+                            self.__children[child_node.__symbol] = child_node
                     else:
                         self.__children = {}
 
@@ -136,7 +138,9 @@ class NGramNode(object):
             total += self.__unknown.__count
         return total
 
-    def updateCountsOfCounts(self, countsOfCounts: list, height: int):
+    def updateCountsOfCounts(self,
+                             countsOfCounts: list,
+                             height: int):
         """
         Traverses nodes and updates counts of counts for each node.
 
@@ -154,7 +158,10 @@ class NGramNode(object):
             for child in self.__children.values():
                 child.updateCountsOfCounts(countsOfCounts, height - 1)
 
-    def setProbabilityWithPseudoCount(self, pseudoCount: float, height: int, vocabularySize: float):
+    def setProbabilityWithPseudoCount(self,
+                                      pseudoCount: float,
+                                      height: int,
+                                      vocabularySize: float):
         """
         Sets probabilities by traversing nodes and adding pseudocount for each NGram.
 
@@ -174,7 +181,7 @@ class NGramNode(object):
                 child.__probability = (child.__count + pseudoCount) / total
             if self.__unknown is not None:
                 self.__unknown.__probability = (self.__unknown.__count + pseudoCount) / total
-            self.__probabilityOfUnseen = pseudoCount / total
+            self.__probability_of_unseen = pseudoCount / total
         else:
             for child in self.__children.values():
                 child.setProbabilityWithPseudoCount(pseudoCount, height - 1, vocabularySize)
@@ -214,12 +221,16 @@ class NGramNode(object):
                     child.__probability = (1 - pZero) * (newR / total)
                 else:
                     child.__probability = (1 - pZero) * (r / total)
-            self.__probabilityOfUnseen = pZero / (vocabularySize - len(self.__children))
+            self.__probability_of_unseen = pZero / (vocabularySize - len(self.__children))
         else:
             for child in self.__children.values():
                 child.setAdjustedProbability(N, height - 1, vocabularySize, pZero)
 
-    def addNGram(self, s: list, index: int, height: int, sentenceCount: int = 1):
+    def addNGram(self,
+                 s: list,
+                 index: int,
+                 height: int,
+                 sentenceCount: int = 1):
         """
         Adds NGram given as array of symbols to the node as a child.
 
@@ -265,9 +276,11 @@ class NGramNode(object):
         elif self.__unknown is not None:
             return self.__unknown.__probability
         else:
-            return self.__probabilityOfUnseen
+            return self.__probability_of_unseen
 
-    def getBiGramProbability(self, w1, w2) -> float:
+    def getBiGramProbability(self,
+                             w1,
+                             w2) -> float:
         """
         Gets bigram probability of given symbols w1 and w2
 
@@ -291,7 +304,10 @@ class NGramNode(object):
         else:
             return None
 
-    def getTriGramProbability(self, w1, w2, w3) -> float:
+    def getTriGramProbability(self,
+                              w1,
+                              w2,
+                              w3) -> float:
         """
         Gets trigram probability of given symbols w1, w2 and w3.
 
@@ -317,7 +333,9 @@ class NGramNode(object):
         else:
             return None
 
-    def countWords(self, wordCounter: CounterHashMap, height: int):
+    def countWords(self,
+                   wordCounter: CounterHashMap,
+                   height: int):
         """
         Counts words recursively given height and wordCounter.
 
@@ -346,15 +364,15 @@ class NGramNode(object):
         dictionary : set
             dictionary of known words.
         """
-        childList = []
+        child_list = []
         for symbol in self.__children.keys():
             if symbol not in dictionary:
-                childList.append(self.__children[symbol])
-        if len(childList) > 0:
+                child_list.append(self.__children[symbol])
+        if len(child_list) > 0:
             self.__unknown = NGramNode("")
             self.__unknown.__children = {}
             total = 0
-            for child in childList:
+            for child in child_list:
                 self.__unknown.__children.update(child.__children)
                 total += child.__count
                 del self.__children[child.symbol]
@@ -363,7 +381,9 @@ class NGramNode(object):
         for child in self.__children.values():
             child.replaceUnknownWords(dictionary)
 
-    def getCountForListItem(self, s: list, index: int) -> int:
+    def getCountForListItem(self,
+                            s: list,
+                            index: int) -> int:
         """
         Gets count of symbol given array of symbols and index of symbol in this array.
 
@@ -387,7 +407,9 @@ class NGramNode(object):
         else:
             return self.getCount()
 
-    def generateNextString(self, s: list, index: int) -> object:
+    def generateNextString(self,
+                           s: list,
+                           index: int) -> object:
         """
         Generates next string for given list of symbol and index
         PARAMETERS
@@ -414,26 +436,31 @@ class NGramNode(object):
             return self.__children[s[index]].generateNextString(s, index + 1)
         return None
 
-    def prune(self, threshold: float, N: int):
+    def prune(self,
+              threshold: float,
+              N: int):
         if N == 0:
-            maxElement = None
-            maxNode = None
-            toBeDeleted = []
+            max_element = None
+            max_node = None
+            to_be_deleted = []
             for symbol in self.__children.keys():
                 if self.__children[symbol].__count / self.__count < threshold:
-                    toBeDeleted.append(symbol)
-                if maxElement is None or self.__children[symbol].__count > self.__children[maxElement].__count:
-                    maxElement = symbol
-                    maxNode = self.__children[symbol]
-            for symbol in toBeDeleted:
+                    to_be_deleted.append(symbol)
+                if max_element is None or self.__children[symbol].__count > self.__children[max_element].__count:
+                    max_element = symbol
+                    max_node = self.__children[symbol]
+            for symbol in to_be_deleted:
                 self.__children.pop(symbol)
             if len(self.__children) == 0:
-                self.__children[maxElement] = maxNode
+                self.__children[max_element] = max_node
         else:
             for node in self.__children.values():
                 node.prune(threshold, N - 1)
 
-    def saveAsText(self, isRootNode: bool, outputFile, level: int):
+    def saveAsText(self,
+                   isRootNode: bool,
+                   outputFile,
+                   level: int):
         """
         Save this NGramNode to a text file.
 
@@ -454,9 +481,9 @@ class NGramNode(object):
             outputFile.write("\t")
         if len(self.__children) > 0:
             outputFile.write(self.__count.__str__() + " " + self.__probability.__str__() + " " +
-                             self.__probabilityOfUnseen.__str__() + " " + self.size().__str__() + "\n")
+                             self.__probability_of_unseen.__str__() + " " + self.size().__str__() + "\n")
             for child in self.__children.values():
                 child.saveAsText(False, outputFile, level + 1)
         else:
             outputFile.write(self.__count.__str__() + " " + self.__probability.__str__() + " " +
-                             self.__probabilityOfUnseen.__str__() + " 0\n")
+                             self.__probability_of_unseen.__str__() + " 0\n")

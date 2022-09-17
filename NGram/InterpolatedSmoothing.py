@@ -11,7 +11,7 @@ class InterpolatedSmoothing(TrainedSmoothing):
 
     __lambda1: float
     __lambda2: float
-    __simpleSmoothing: SimpleSmoothing
+    __simple_smoothing: SimpleSmoothing
 
     def __init__(self, simpleSmoothing=None):
         """
@@ -23,11 +23,14 @@ class InterpolatedSmoothing(TrainedSmoothing):
             smoothing method.
         """
         if simpleSmoothing is None:
-            self.__simpleSmoothing = GoodTuringSmoothing()
+            self.__simple_smoothing = GoodTuringSmoothing()
         else:
-            self.__simpleSmoothing = simpleSmoothing
+            self.__simple_smoothing = simpleSmoothing
 
-    def __learnBestLambda(self, nGrams: list, kFoldCrossValidation: KFoldCrossValidation, lowerBound: float) -> float:
+    def __learnBestLambda(self,
+                          nGrams: list,
+                          kFoldCrossValidation: KFoldCrossValidation,
+                          lowerBound: float) -> float:
         """
         The algorithm tries to optimize the best lambda for a given corpus. The algorithm uses perplexity on the
         validation set as the optimization criterion.
@@ -47,34 +50,37 @@ class InterpolatedSmoothing(TrainedSmoothing):
         float
             Best lambda optimized with k-fold crossvalidation.
         """
-        bestPrevious = -1
-        upperBound = 0.999
-        bestLambda = (lowerBound + upperBound) / 2
-        numberOfParts = 5
-        testFolds = []
+        best_previous = -1
+        upper_bound = 0.999
+        best_lambda = (lowerBound + upper_bound) / 2
+        number_of_parts = 5
+        test_folds = []
         for i in range(10):
-            testFolds.append(kFoldCrossValidation.getTestFold(i))
+            test_folds.append(kFoldCrossValidation.getTestFold(i))
         while True:
-            bestPerplexity = 1000000000
+            best_perplexity = 1000000000
             value = lowerBound
-            while value <= upperBound:
+            while value <= upper_bound:
                 perplexity = 0
                 for i in range(10):
                     nGrams[i].setLambda2(value)
-                    perplexity += nGrams[i].getPerplexity(testFolds[i])
-                if perplexity < bestPerplexity:
-                    bestPerplexity = perplexity
-                    bestLambda = value
-                value += (upperBound - lowerBound) / numberOfParts
-            lowerBound = self.newLowerBound(bestLambda, lowerBound, upperBound, numberOfParts)
-            upperBound = self.newUpperBound(bestLambda, lowerBound, upperBound, numberOfParts)
-            if bestPrevious != -1:
-                if math.fabs(bestPrevious - bestPerplexity) / bestPerplexity < 0.001:
+                    perplexity += nGrams[i].getPerplexity(test_folds[i])
+                if perplexity < best_perplexity:
+                    best_perplexity = perplexity
+                    best_lambda = value
+                value += (upper_bound - lowerBound) / number_of_parts
+            lowerBound = self.newLowerBound(best_lambda, lowerBound, upper_bound, number_of_parts)
+            upper_bound = self.newUpperBound(best_lambda, lowerBound, upper_bound, number_of_parts)
+            if best_previous != -1:
+                if math.fabs(best_previous - best_perplexity) / best_perplexity < 0.001:
                     break
-            bestPrevious = bestPerplexity
-        return bestLambda
+            best_previous = best_perplexity
+        return best_lambda
 
-    def __learnBestLambdas(self, nGrams: list, kFoldCrossValidation: KFoldCrossValidation, lowerBound1: float,
+    def __learnBestLambdas(self,
+                           nGrams: list,
+                           kFoldCrossValidation: KFoldCrossValidation,
+                           lowerBound1: float,
                            lowerBound2: float) -> tuple:
         """
         The algorithm tries to optimize the best lambdas (lambda1, lambda2) for a given corpus. The algorithm uses
@@ -97,42 +103,44 @@ class InterpolatedSmoothing(TrainedSmoothing):
         tuple
             bestLambda1 and bestLambda2
         """
-        upperBound1 = 0.999
-        upperBound2 = 0.999
-        bestPrevious = -1
-        bestLambda1 = (lowerBound1 + upperBound1) / 2
-        bestLambda2 = (lowerBound2 + upperBound2) / 2
-        numberOfParts = 5
-        testFolds = []
+        upper_bound1 = 0.999
+        upper_bound2 = 0.999
+        best_previous = -1
+        best_lambda1 = (lowerBound1 + upper_bound1) / 2
+        best_lambda2 = (lowerBound2 + upper_bound2) / 2
+        number_of_parts = 5
+        test_folds = []
         for i in range(10):
-            testFolds.append(kFoldCrossValidation.getTestFold(i))
+            test_folds.append(kFoldCrossValidation.getTestFold(i))
         while True:
-            bestPerplexity = 1000000000
+            best_perplexity = 1000000000
             value1 = lowerBound1
-            while value1 <= upperBound1:
+            while value1 <= upper_bound1:
                 value2 = lowerBound2
-                while value2 <= upperBound2 and value1 + value2 < 1:
+                while value2 <= upper_bound2 and value1 + value2 < 1:
                     perplexity = 0
                     for i in range(10):
                         nGrams[i].setLambda3(value1, value2)
-                        perplexity += nGrams[i].getPerplexity(testFolds[i])
-                    if perplexity < bestPerplexity:
-                        bestPerplexity = perplexity
-                        bestLambda1 = value1
-                        bestLambda2 = value2
-                    value2 += (upperBound1 - lowerBound1) / numberOfParts
-                value1 += (upperBound1 - lowerBound1) / numberOfParts
-            lowerBound1 = self.newLowerBound(bestLambda1, lowerBound1, upperBound1, numberOfParts)
-            upperBound1 = self.newUpperBound(bestLambda1, lowerBound1, upperBound1, numberOfParts)
-            lowerBound2 = self.newLowerBound(bestLambda2, lowerBound2, upperBound2, numberOfParts)
-            upperBound2 = self.newUpperBound(bestLambda2, lowerBound2, upperBound2, numberOfParts)
-            if bestPrevious != -1:
-                if math.fabs(bestPrevious - bestPerplexity) / bestPerplexity < 0.001:
+                        perplexity += nGrams[i].getPerplexity(test_folds[i])
+                    if perplexity < best_perplexity:
+                        best_perplexity = perplexity
+                        best_lambda1 = value1
+                        best_lambda2 = value2
+                    value2 += (upper_bound1 - lowerBound1) / number_of_parts
+                value1 += (upper_bound1 - lowerBound1) / number_of_parts
+            lowerBound1 = self.newLowerBound(best_lambda1, lowerBound1, upper_bound1, number_of_parts)
+            upper_bound1 = self.newUpperBound(best_lambda1, lowerBound1, upper_bound1, number_of_parts)
+            lowerBound2 = self.newLowerBound(best_lambda2, lowerBound2, upper_bound2, number_of_parts)
+            upper_bound2 = self.newUpperBound(best_lambda2, lowerBound2, upper_bound2, number_of_parts)
+            if best_previous != -1:
+                if math.fabs(best_previous - best_perplexity) / best_perplexity < 0.001:
                     break
-            bestPrevious = bestPerplexity
-        return bestLambda1, bestLambda2
+            best_previous = best_perplexity
+        return best_lambda1, best_lambda2
 
-    def learnParameters(self, corpus: list, N: int):
+    def learnParameters(self,
+                        corpus: list,
+                        N: int):
         """
         Wrapper function to learn the parameters (lambda1 and lambda2) in interpolated smoothing. The function first
         creates K NGrams with the train folds of the corpus. Then optimizes lambdas with respect to the test folds of
@@ -148,19 +156,21 @@ class InterpolatedSmoothing(TrainedSmoothing):
         if N <= 1:
             return
         K = 10
-        nGrams = []
-        kFoldCrossValidation = KFoldCrossValidation(corpus, K, 0)
+        n_grams = []
+        k_fold_cross_validation = KFoldCrossValidation(corpus, K, 0)
         for i in range(K):
-            nGrams.append(NGram(N, kFoldCrossValidation.getTrainFold(i)))
+            n_grams.append(NGram(N, k_fold_cross_validation.getTrainFold(i)))
             for j in range(2, N + 1):
-                nGrams[i].calculateNGramProbabilitiesSimpleLevel(self.__simpleSmoothing, j)
-            nGrams[i].calculateNGramProbabilitiesSimpleLevel(self.__simpleSmoothing, 1)
+                n_grams[i].calculateNGramProbabilitiesSimpleLevel(self.__simple_smoothing, j)
+            n_grams[i].calculateNGramProbabilitiesSimpleLevel(self.__simple_smoothing, 1)
         if N == 2:
-            self.__lambda1 = self.__learnBestLambda(nGrams, kFoldCrossValidation, 0.1)
+            self.__lambda1 = self.__learnBestLambda(n_grams, k_fold_cross_validation, 0.1)
         elif N == 3:
-            (self.__lambda1, self.__lambda2) = self.__learnBestLambdas(nGrams, kFoldCrossValidation, 0.1, 0.1)
+            (self.__lambda1, self.__lambda2) = self.__learnBestLambdas(n_grams, k_fold_cross_validation, 0.1, 0.1)
 
-    def setProbabilities(self, nGram: NGram, level: int):
+    def setProbabilities(self,
+                         nGram: NGram,
+                         level: int):
         """
         Wrapper function to set the N-gram probabilities with interpolated smoothing.
 
@@ -174,8 +184,8 @@ class InterpolatedSmoothing(TrainedSmoothing):
             Bigram, etc.
         """
         for j in range(2, nGram.getN() + 1):
-            nGram.calculateNGramProbabilitiesSimpleLevel(self.__simpleSmoothing, j)
-        nGram.calculateNGramProbabilitiesSimpleLevel(self.__simpleSmoothing, 1)
+            nGram.calculateNGramProbabilitiesSimpleLevel(self.__simple_smoothing, j)
+        nGram.calculateNGramProbabilitiesSimpleLevel(self.__simple_smoothing, 1)
         if nGram.getN() == 2:
             nGram.setLambda2(self.__lambda1)
         elif nGram.getN() == 3:

@@ -9,7 +9,10 @@ class AdditiveSmoothing(TrainedSmoothing):
 
     __delta: float
 
-    def __learnBestDelta(self, nGrams: list, kFoldCrossValidation: KFoldCrossValidation, lowerBound: float) -> float:
+    def __learnBestDelta(self,
+                         nGrams: list,
+                         kFoldCrossValidation: KFoldCrossValidation,
+                         lowerBound: float) -> float:
         """
         The algorithm tries to optimize the best delta for a given corpus. The algorithm uses perplexity on the
         validation set as the optimization criterion.
@@ -29,31 +32,33 @@ class AdditiveSmoothing(TrainedSmoothing):
         float
             Best delta optimized with k-fold crossvalidation.
         """
-        bestPrevious = -1
-        upperBound = 1
-        bestDelta = (lowerBound + upperBound) / 2
-        numberOfParts = 5
+        best_previous = -1
+        upper_bound = 1
+        best_delta = (lowerBound + upper_bound) / 2
+        number_of_parts = 5
         while True:
-            bestPerplexity = 100000000
+            best_perplexity = 100000000
             value = lowerBound
-            while value <= upperBound:
+            while value <= upper_bound:
                 perplexity = 0
                 for i in range(0, 10):
                     nGrams[i].setProbabilityWithPseudoCount(value, nGrams[i].getN())
                     perplexity += nGrams[i].getPerplexity(kFoldCrossValidation.getTestFold(i))
-                if perplexity < bestPerplexity:
-                    bestPerplexity = perplexity
-                    bestDelta = value
-                value += (upperBound - lowerBound) / numberOfParts
-            lowerBound = self.newLowerBound(bestDelta, lowerBound, upperBound, numberOfParts)
-            upperBound = self.newUpperBound(bestDelta, lowerBound, upperBound, numberOfParts)
-            if bestPrevious != -1:
-                if math.fabs(bestPrevious - bestPerplexity) / bestPerplexity < 0.001:
+                if perplexity < best_perplexity:
+                    best_perplexity = perplexity
+                    best_delta = value
+                value += (upper_bound - lowerBound) / number_of_parts
+            lowerBound = self.newLowerBound(best_delta, lowerBound, upper_bound, number_of_parts)
+            upper_bound = self.newUpperBound(best_delta, lowerBound, upper_bound, number_of_parts)
+            if best_previous != -1:
+                if math.fabs(best_previous - best_perplexity) / best_perplexity < 0.001:
                     break
-            bestPrevious = bestPerplexity
-        return bestDelta
+            best_previous = best_perplexity
+        return best_delta
 
-    def learnParameters(self, corpus: list, N: int):
+    def learnParameters(self,
+                        corpus: list,
+                        N: int):
         """
         Wrapper function to learn the parameter (delta) in additive smoothing. The function first creates K NGrams
         with the train folds of the corpus. Then optimizes delta with respect to the test folds of the corpus.
@@ -66,13 +71,15 @@ class AdditiveSmoothing(TrainedSmoothing):
             N in N-Gram.
         """
         K = 10
-        nGrams = []
-        kFoldCrossValidation = KFoldCrossValidation(corpus, K, 0)
+        n_grams = []
+        k_fold_cross_validation = KFoldCrossValidation(corpus, K, 0)
         for i in range(K):
-            nGrams.append(NGram(N, kFoldCrossValidation.getTrainFold(i)))
-        self.__delta = self.__learnBestDelta(nGrams, kFoldCrossValidation, 0.1)
+            n_grams.append(NGram(N, k_fold_cross_validation.getTrainFold(i)))
+        self.__delta = self.__learnBestDelta(n_grams, k_fold_cross_validation, 0.1)
 
-    def setProbabilities(self, nGram: NGram, level: int):
+    def setProbabilities(self,
+                         nGram: NGram,
+                         level: int):
         """
         Wrapper function to set the N-gram probabilities with additive smoothing.
 

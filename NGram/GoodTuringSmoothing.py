@@ -58,7 +58,9 @@ class GoodTuringSmoothing(SimpleSmoothing):
             N[i] = math.exp(math.log(i) * w1 + w0)
         return N
 
-    def setProbabilities(self, nGram: NGram, level: int):
+    def setProbabilities(self,
+                         nGram: NGram,
+                         level: int):
         """
         Wrapper function to set the N-gram probabilities with Good-Turing smoothing. N[1] / sum_{i=1}^infinity N_i is
         the out of vocabulary probability.
@@ -72,9 +74,9 @@ class GoodTuringSmoothing(SimpleSmoothing):
             set with this function. If level = 1, N-Gram is treated as UniGram, if level = 2, N-Gram is treated as
             Bigram, etc.
         """
-        countsOfCounts = nGram.calculateCountsOfCounts(level)
-        N = self.__linearRegressionOnCountsOfCounts(countsOfCounts)
+        counts_of_counts = nGram.calculateCountsOfCounts(level)
+        N = self.__linearRegressionOnCountsOfCounts(counts_of_counts)
         total = 0.0
-        for r in range(1, len(countsOfCounts)):
-            total += countsOfCounts[r] * r
+        for r in range(1, len(counts_of_counts)):
+            total += counts_of_counts[r] * r
         nGram.setAdjustedProbability(N, level, N[1] / total)

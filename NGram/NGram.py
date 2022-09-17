@@ -16,9 +16,11 @@ class NGram:
     __lambda2: float
     __interpolated: bool
     __vocabulary: set
-    __probabilityOfUnseen: list
+    __probability_of_unseen: list
 
-    def __init__(self, NorFileName, corpus=None):
+    def __init__(self,
+                 NorFileName,
+                 corpus=None):
         """
         Constructor of NGram class which takes a list corpus and Integer size of ngram as input.
         It adds all sentences of corpus as ngrams.
@@ -34,7 +36,7 @@ class NGram:
         if isinstance(NorFileName, int):
             self.__N = NorFileName
             self.__vocabulary = set()
-            self.__probabilityOfUnseen = self.__N * [0.0]
+            self.__probability_of_unseen = self.__N * [0.0]
             self.__lambda1 = 0.0
             self.__lambda2 = 0.0
             self.__interpolated = False
@@ -49,37 +51,37 @@ class NGram:
             self.__N = int(items[0])
             self.__lambda1 = float(items[1])
             self.__lambda2 = float(items[2])
-            self.__probabilityOfUnseen = self.__N * [0.0]
+            self.__probability_of_unseen = self.__N * [0.0]
             self.__interpolated = False
             line = inputFile.readline().strip()
             items = line.split()
             for i in range(len(items)):
-                self.__probabilityOfUnseen[i] = float(items[i])
+                self.__probability_of_unseen[i] = float(items[i])
             self.__vocabulary = set()
-            vocabularySize = int(inputFile.readline().strip())
-            for i in range(vocabularySize):
+            vocabulary_size = int(inputFile.readline().strip())
+            for i in range(vocabulary_size):
                 self.__vocabulary.add(inputFile.readline().strip())
             self.rootNode = NGramNode(True, inputFile)
             inputFile.close()
 
     def initWithMultipleFile(self, *args):
-        multipleFile = MultipleFile(list(args))
-        line = multipleFile.readLine().strip()
+        multiple_file = MultipleFile(list(args))
+        line = multiple_file.readLine().strip()
         items = line.split()
         self.__N = int(items[0])
         self.__lambda1 = float(items[1])
         self.__lambda2 = float(items[2])
-        self.__probabilityOfUnseen = self.__N * [0.0]
+        self.__probability_of_unseen = self.__N * [0.0]
         self.__interpolated = False
-        line = multipleFile.readLine().strip()
+        line = multiple_file.readLine().strip()
         items = line.split()
         for i in range(len(items)):
-            self.__probabilityOfUnseen[i] = float(items[i])
+            self.__probability_of_unseen[i] = float(items[i])
         self.__vocabulary = set()
-        vocabularySize = int(multipleFile.readLine().strip())
-        for i in range(vocabularySize):
-            self.__vocabulary.add(multipleFile.readLine().strip())
-        self.rootNode = NGramNode(True, multipleFile)
+        vocabulary_size = int(multiple_file.readLine().strip())
+        for i in range(vocabulary_size):
+            self.__vocabulary.add(multiple_file.readLine().strip())
+        self.rootNode = NGramNode(True, multiple_file)
 
     def merge(self, toBeMerged: NGram):
         if self.__N != toBeMerged.getN():
@@ -107,7 +109,9 @@ class NGram:
         """
         self.__N = N
 
-    def addNGramSentence(self, symbols: list, sentenceCount: int = 1):
+    def addNGramSentence(self,
+                         symbols: list,
+                         sentenceCount: int = 1):
         """
         Adds given sentence to set the vocabulary and create and add ngrams of the sentence to NGramNode the rootNode
 
@@ -176,7 +180,9 @@ class NGram:
             self.__lambda1 = lambda1
             self.__lambda2 = lambda2
 
-    def calculateNGramProbabilitiesTrained(self, corpus: list, trainedSmoothing: TrainedSmoothing):
+    def calculateNGramProbabilitiesTrained(self,
+                                           corpus: list,
+                                           trainedSmoothing: TrainedSmoothing):
         """
         Calculates NGram probabilities using given corpus and TrainedSmoothing smoothing method.
 
@@ -199,7 +205,9 @@ class NGram:
         """
         simpleSmoothing.setProbabilitiesGeneral(self)
 
-    def calculateNGramProbabilitiesSimpleLevel(self, simpleSmoothing: SimpleSmoothing, level: int):
+    def calculateNGramProbabilitiesSimpleLevel(self,
+                                               simpleSmoothing: SimpleSmoothing,
+                                               level: int):
         """
         Calculates NGram probabilities given simple smoothing and level.
 
@@ -222,7 +230,9 @@ class NGram:
         """
         self.rootNode.replaceUnknownWords(dictionary)
 
-    def constructDictionaryWithNonRareWords(self, level: int, probability: float) -> set:
+    def constructDictionaryWithNonRareWords(self,
+                                            level: int,
+                                            probability: float) -> set:
         """
         Constructs a dictionary of nonrare words with given N-Gram level and probability threshold.
 
@@ -240,11 +250,11 @@ class NGram:
             set of nonrare words.
         """
         result = set()
-        wordCounter = CounterHashMap()
-        self.rootNode.countWords(wordCounter, level)
-        total = wordCounter.sumOfCounts()
-        for symbol in wordCounter.keys():
-            if wordCounter[symbol] / total > probability:
+        word_counter = CounterHashMap()
+        self.rootNode.countWords(word_counter, level)
+        total = word_counter.sumOfCounts()
+        for symbol in word_counter.keys():
+            if word_counter[symbol] / total > probability:
                 result.add(symbol)
         return result
 
@@ -291,7 +301,8 @@ class NGram:
         count = 0
         for i in range(len(corpus)):
             for j in range(len(corpus[i]) - 1):
-                p = self.getProbability(corpus[i][j], corpus[i][j + 1])
+                p = self.getProbability(corpus[i][j],
+                                        corpus[i][j + 1])
                 total -= math.log(p)
                 count += 1
         return math.exp(total / count)
@@ -315,7 +326,9 @@ class NGram:
         count = 0
         for i in range(len(corpus)):
             for j in range(len(corpus[i]) - 2):
-                p = self.getProbability(corpus[i][j], corpus[i][j + 1], corpus[i][j + 2])
+                p = self.getProbability(corpus[i][j],
+                                        corpus[i][j + 1],
+                                        corpus[i][j + 2])
                 total -= math.log(p)
                 count += 1
         return math.exp(total / count)
@@ -421,7 +434,7 @@ class NGram:
         if probability is not None:
             return probability
         else:
-            return self.__probabilityOfUnseen[1]
+            return self.__probability_of_unseen[1]
 
     def __getTriGramProbability(self, w1, w2, w3) -> float:
         """
@@ -445,7 +458,7 @@ class NGram:
         if probability is not None:
             return probability
         else:
-            return self.__probabilityOfUnseen[2]
+            return self.__probability_of_unseen[2]
 
     def getCount(self, symbols: list) -> int:
         """
@@ -463,7 +476,9 @@ class NGram:
         """
         return self.rootNode.getCountForListItem(symbols, 0)
 
-    def setProbabilityWithPseudoCount(self, pseudoCount: float, height: int):
+    def setProbabilityWithPseudoCount(self,
+                                      pseudoCount: float,
+                                      height: int):
         """
         Sets probabilities by adding pseudocounts given height and pseudocount.
 
@@ -476,14 +491,14 @@ class NGram:
             as Bigram, etc.
         """
         if pseudoCount != 0:
-            vocabularySize = self.vocabularySize() + 1
+            vocabulary_size = self.vocabularySize() + 1
         else:
-            vocabularySize = self.vocabularySize()
-        self.rootNode.setProbabilityWithPseudoCount(pseudoCount, height, vocabularySize)
+            vocabulary_size = self.vocabularySize()
+        self.rootNode.setProbabilityWithPseudoCount(pseudoCount, height, vocabulary_size)
         if pseudoCount != 0:
-            self.__probabilityOfUnseen[height - 1] = 1.0 / vocabularySize
+            self.__probability_of_unseen[height - 1] = 1.0 / vocabulary_size
         else:
-            self.__probabilityOfUnseen[height - 1] = 0.0
+            self.__probability_of_unseen[height - 1] = 0.0
 
     def __maximumOccurence(self, height: int) -> int:
         """
@@ -503,7 +518,9 @@ class NGram:
         """
         return self.rootNode.maximumOccurence(height)
 
-    def __updateCountsOfCounts(self, countsOfCounts: list, height: int):
+    def __updateCountsOfCounts(self,
+                               countsOfCounts: list,
+                               height: int):
         """
         Update counts of counts of N-Grams with given counts of counts and given height.
 
@@ -532,12 +549,15 @@ class NGram:
         list
             counts of counts of NGrams.
         """
-        maxCount = self.__maximumOccurence(height)
-        countsOfCounts = [0] * (maxCount + 2)
-        self.__updateCountsOfCounts(countsOfCounts, height)
-        return countsOfCounts
+        max_count = self.__maximumOccurence(height)
+        counts_of_counts = [0] * (max_count + 2)
+        self.__updateCountsOfCounts(counts_of_counts, height)
+        return counts_of_counts
 
-    def setAdjustedProbability(self, countsOfCounts: list, height: int, pZero: float):
+    def setAdjustedProbability(self,
+                               countsOfCounts: list,
+                               height: int,
+                               pZero: float):
         """
         Sets probability with given counts of counts and pZero.
 
@@ -552,7 +572,7 @@ class NGram:
             probability of zero.
         """
         self.rootNode.setAdjustedProbability(countsOfCounts, height, self.vocabularySize() + 1, pZero)
-        self.__probabilityOfUnseen[height - 1] = 1.0 / (self.vocabularySize() + 1)
+        self.__probability_of_unseen[height - 1] = 1.0 / (self.vocabularySize() + 1)
 
     def prune(self, threshold: float):
         if threshold > 0.0 and threshold <= 1.0:
@@ -567,13 +587,13 @@ class NGram:
         fileName : str
             String name of file where NGram is saved.
         """
-        outputFile = open(fileName, mode="w", encoding="utf8")
-        outputFile.write(self.__N.__str__() + " " + self.__lambda1.__str__() + " " + self.__lambda2.__str__() + "\n")
-        for p in self.__probabilityOfUnseen:
-            outputFile.write(p.__str__() + " ")
-        outputFile.write("\n")
-        outputFile.write(self.vocabularySize().__str__() + "\n")
+        output_file = open(fileName, mode="w", encoding="utf8")
+        output_file.write(self.__N.__str__() + " " + self.__lambda1.__str__() + " " + self.__lambda2.__str__() + "\n")
+        for p in self.__probability_of_unseen:
+            output_file.write(p.__str__() + " ")
+        output_file.write("\n")
+        output_file.write(self.vocabularySize().__str__() + "\n")
         for symbol in self.__vocabulary:
-            outputFile.write(symbol.__str__() + "\n")
-        self.rootNode.saveAsText(True, outputFile, 0)
-        outputFile.close()
+            output_file.write(symbol.__str__() + "\n")
+        self.rootNode.saveAsText(True, output_file, 0)
+        output_file.close()

@@ -17,7 +17,9 @@ class NoSmoothingWithDictionary(NoSmoothing):
         """
         self.__dictionary = dictionary
 
-    def setProbabilities(self, nGram: NGram, level: int):
+    def setProbabilities(self,
+                         nGram: NGram,
+                         level: int):
         """
         Wrapper function to set the N-gram probabilities with no smoothing and replacing unknown words not found in
         set the dictionary.

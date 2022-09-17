@@ -9,7 +9,9 @@ class LaplaceSmoothing(SimpleSmoothing):
     def __init__(self, delta=1.0):
         self.__delta = delta
 
-    def setProbabilities(self, nGram: NGram, level: int):
+    def setProbabilities(self,
+                         nGram: NGram,
+                         level: int):
         """
         Wrapper function to set the N-gram probabilities with laplace smoothing.
 

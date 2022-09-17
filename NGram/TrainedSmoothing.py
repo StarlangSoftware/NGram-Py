@@ -5,11 +5,16 @@ from NGram.SimpleSmoothing import SimpleSmoothing
 class TrainedSmoothing(SimpleSmoothing):
 
     @abstractmethod
-    def learnParameters(self, corpus: list, N: int):
+    def learnParameters(self,
+                        corpus: list,
+                        N: int):
         pass
 
-    def newLowerBound(self, current: float, currentLowerBound: float,
-                      currentUpperBound: float, numberOfParts: int) -> float:
+    def newLowerBound(self,
+                      current: float,
+                      currentLowerBound: float,
+                      currentUpperBound: float,
+                      numberOfParts: int) -> float:
         """
         Calculates new lower bound.
 
@@ -34,8 +39,11 @@ class TrainedSmoothing(SimpleSmoothing):
         else:
             return current / numberOfParts
 
-    def newUpperBound(self, current: float, currentLowerBound: float,
-                      currentUpperBound: float, numberOfParts: int) -> float:
+    def newUpperBound(self,
+                      current: float,
+                      currentLowerBound: float,
+                      currentUpperBound: float,
+                      numberOfParts: int) -> float:
         """
         Calculates new upper bound.
 
@@ -60,7 +68,9 @@ class TrainedSmoothing(SimpleSmoothing):
         else:
             return current * numberOfParts
 
-    def train(self, corpus: list, nGram):
+    def train(self,
+              corpus: list,
+              nGram):
         """
         Wrapper function to learn parameters of the smoothing method and set the N-gram probabilities.
 

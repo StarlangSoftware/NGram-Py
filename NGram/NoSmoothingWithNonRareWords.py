@@ -17,7 +17,9 @@ class NoSmoothingWithNonRareWords(NoSmoothing):
         """
         self.__probability = probability
 
-    def setProbabilities(self, nGram: NGram, level: int):
+    def setProbabilities(self,
+                         nGram: NGram,
+                         level: int):
         """
         Wrapper function to set the N-gram probabilities with no smoothing and replacing unknown words not found in
         nonrare words.
