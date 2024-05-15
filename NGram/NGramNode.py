@@ -69,6 +69,10 @@ class NGramNode(object):
                         self.__children = {}
 
     def merge(self, toBeMerged: NGramNode):
+        """
+        Merges this NGramNode with the corresponding NGramNode in another NGram.
+        :param toBeMerged: Parallel NGramNode of the parallel NGram tree.
+        """
         for symbol in self.__children:
             if symbol in toBeMerged.__children:
                 self.__children[symbol].merge(toBeMerged.__children[symbol])
@@ -439,6 +443,12 @@ class NGramNode(object):
     def prune(self,
               threshold: float,
               N: int):
+        """
+        Prunes the NGramNode according to the given threshold. Removes the child(ren) whose probability is less than
+        the threshold.
+        :param threshold: Threshold for pruning the NGram tree.
+        :param N: N in N-Gram.
+        """
         if N == 0:
             max_element = None
             max_node = None

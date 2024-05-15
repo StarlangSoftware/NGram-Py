@@ -7,6 +7,10 @@ class LaplaceSmoothing(SimpleSmoothing):
     __delta: float
 
     def __init__(self, delta=1.0):
+        """
+        Constructor for Laplace smoothing. Sets the delta.
+        :param delta: Delta value in Laplace smoothing.
+        """
         self.__delta = delta
 
     def setProbabilities(self,

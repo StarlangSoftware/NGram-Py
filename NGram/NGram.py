@@ -84,6 +84,11 @@ class NGram:
         self.rootNode = NGramNode(True, multiple_file)
 
     def merge(self, toBeMerged: NGram):
+        """
+        Merges current NGram with the given NGram. If N of the two NGram's are not same, it does not
+        merge. Merges first the vocabulary, then the NGram trees.
+        :param toBeMerged: NGram to be merged with.
+        """
         if self.__N != toBeMerged.getN():
             return
         self.__vocabulary.update(toBeMerged.__vocabulary)
@@ -575,7 +580,12 @@ class NGram:
         self.__probability_of_unseen[height - 1] = 1.0 / (self.vocabularySize() + 1)
 
     def prune(self, threshold: float):
-        if threshold > 0.0 and threshold <= 1.0:
+        """
+        Prunes NGram according to the given threshold. All nodes having a probability less than the threshold will be
+        pruned.
+        :param threshold: Probability threshold used for pruning.
+        """
+        if 0.0 < threshold <= 1.0:
             self.rootNode.prune(threshold, self.__N - 1)
 
     def saveAsText(self, fileName: str):
