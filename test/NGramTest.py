@@ -90,7 +90,7 @@ class NGramTest(CorpusTest, unittest.TestCase):
         self.simpleBiGram.prune(0.9)
         self.assertEqual(4, self.simpleBiGram.getCount(["<s>", "ali"]), 0.0)
         
-    def test_SaveAsText(self):
+    def saveAsText(self):
         self.simpleUniGram.saveAsText("simple1.txt")
         self.simpleBiGram.saveAsText("simple2.txt")
         self.simpleTriGram.saveAsText("simple3.txt")

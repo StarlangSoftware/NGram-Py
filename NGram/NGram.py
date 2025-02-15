@@ -18,6 +18,38 @@ class NGram:
     __vocabulary: set
     __probability_of_unseen: list
 
+    def constructor1(self, N: int, corpus: list):
+        self.__N = N
+        self.__vocabulary = set()
+        self.__probability_of_unseen = self.__N * [0.0]
+        self.__lambda1 = 0.0
+        self.__lambda2 = 0.0
+        self.__interpolated = False
+        self.rootNode = NGramNode(None)
+        if corpus is not None:
+            for i in range(len(corpus)):
+                self.addNGramSentence(corpus[i])
+
+    def constructor2(self, fileName: str):
+        inputFile = open(fileName, mode="r", encoding="utf-8")
+        line = inputFile.readline().strip()
+        items = line.split()
+        self.__N = int(items[0])
+        self.__lambda1 = float(items[1])
+        self.__lambda2 = float(items[2])
+        self.__probability_of_unseen = self.__N * [0.0]
+        self.__interpolated = False
+        line = inputFile.readline().strip()
+        items = line.split()
+        for i in range(len(items)):
+            self.__probability_of_unseen[i] = float(items[i])
+        self.__vocabulary = set()
+        vocabulary_size = int(inputFile.readline().strip())
+        for i in range(vocabulary_size):
+            self.__vocabulary.add(inputFile.readline().strip())
+        self.rootNode = NGramNode(True, inputFile)
+        inputFile.close()
+
     def __init__(self,
                  NorFileName,
                  corpus=None):
@@ -34,35 +66,9 @@ class NGram:
             list of sentences whose ngrams are added.
         """
         if isinstance(NorFileName, int):
-            self.__N = NorFileName
-            self.__vocabulary = set()
-            self.__probability_of_unseen = self.__N * [0.0]
-            self.__lambda1 = 0.0
-            self.__lambda2 = 0.0
-            self.__interpolated = False
-            self.rootNode = NGramNode(None)
-            if corpus is not None:
-                for i in range(len(corpus)):
-                    self.addNGramSentence(corpus[i])
+            self.constructor1(NorFileName, corpus)
         else:
-            inputFile = open(NorFileName, mode="r", encoding="utf-8")
-            line = inputFile.readline().strip()
-            items = line.split()
-            self.__N = int(items[0])
-            self.__lambda1 = float(items[1])
-            self.__lambda2 = float(items[2])
-            self.__probability_of_unseen = self.__N * [0.0]
-            self.__interpolated = False
-            line = inputFile.readline().strip()
-            items = line.split()
-            for i in range(len(items)):
-                self.__probability_of_unseen[i] = float(items[i])
-            self.__vocabulary = set()
-            vocabulary_size = int(inputFile.readline().strip())
-            for i in range(vocabulary_size):
-                self.__vocabulary.add(inputFile.readline().strip())
-            self.rootNode = NGramNode(True, inputFile)
-            inputFile.close()
+            self.constructor2(NorFileName)
 
     def initWithMultipleFile(self, *args):
         multiple_file = MultipleFile(list(args))

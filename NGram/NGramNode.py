@@ -15,6 +15,47 @@ class NGramNode(object):
     __probability_of_unseen: float
     __unknown: NGramNode
 
+    def constructor1(self, symbol: object):
+        self.__symbol = symbol
+        self.__count = 0
+        self.__probability = 0.0
+        self.__probability_of_unseen = 0.0
+        self.__children = {}
+
+    def constructor2(self, isRootNode: bool, inputFile: TextIOWrapper):
+        if not isRootNode:
+            self.__symbol = inputFile.readline().strip()
+        line = inputFile.readline().strip()
+        items = line.split()
+        self.__count = int(items[0])
+        self.__probability = float(items[1])
+        self.__probability_of_unseen = float(items[2])
+        number_of_children = int(items[3])
+        if number_of_children > 0:
+            self.__children = {}
+            for i in range(number_of_children):
+                child_node = NGramNode(False, inputFile)
+                self.__children[child_node.__symbol] = child_node
+        else:
+            self.__children = {}
+
+    def constructor3(self, isRootNode: bool, inputFile: MultipleFile):
+        if not isRootNode:
+            self.__symbol = inputFile.readLine().strip()
+        line = inputFile.readLine().strip()
+        items = line.split()
+        self.__count = int(items[0])
+        self.__probability = float(items[1])
+        self.__probability_of_unseen = float(items[2])
+        number_of_children = int(items[3])
+        if number_of_children > 0:
+            self.__children = {}
+            for i in range(number_of_children):
+                child_node = NGramNode(False, inputFile)
+                self.__children[child_node.__symbol] = child_node
+        else:
+            self.__children = {}
+
     def __init__(self,
                  symbolOrIsRootNode,
                  inputFile=None):
@@ -28,45 +69,13 @@ class NGramNode(object):
         """
         self.__unknown = None
         if not isinstance(symbolOrIsRootNode, bool):
-            self.__symbol = symbolOrIsRootNode
-            self.__count = 0
-            self.__probability = 0.0
-            self.__probability_of_unseen = 0.0
-            self.__children = {}
+            self.constructor1(symbolOrIsRootNode)
         else:
             if isinstance(symbolOrIsRootNode, bool) and inputFile is not None:
                 if isinstance(inputFile, TextIOWrapper):
-                    if not symbolOrIsRootNode:
-                        self.__symbol = inputFile.readline().strip()
-                    line = inputFile.readline().strip()
-                    items = line.split()
-                    self.__count = int(items[0])
-                    self.__probability = float(items[1])
-                    self.__probability_of_unseen = float(items[2])
-                    number_of_children = int(items[3])
-                    if number_of_children > 0:
-                        self.__children = {}
-                        for i in range(number_of_children):
-                            child_node = NGramNode(False, inputFile)
-                            self.__children[child_node.__symbol] = child_node
-                    else:
-                        self.__children = {}
+                    self.constructor2(symbolOrIsRootNode, inputFile)
                 elif isinstance(inputFile, MultipleFile):
-                    if not symbolOrIsRootNode:
-                        self.__symbol = inputFile.readLine().strip()
-                    line = inputFile.readLine().strip()
-                    items = line.split()
-                    self.__count = int(items[0])
-                    self.__probability = float(items[1])
-                    self.__probability_of_unseen = float(items[2])
-                    number_of_children = int(items[3])
-                    if number_of_children > 0:
-                        self.__children = {}
-                        for i in range(number_of_children):
-                            child_node = NGramNode(False, inputFile)
-                            self.__children[child_node.__symbol] = child_node
-                    else:
-                        self.__children = {}
+                    self.constructor3(symbolOrIsRootNode, inputFile)
 
     def merge(self, toBeMerged: NGramNode):
         """
