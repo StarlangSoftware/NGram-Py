@@ -5,8 +5,8 @@ this_directory = Path(__file__).parent
 long_description = (this_directory / "README.md").read_text(encoding="utf-8")
 
 setup(
-    name='NlpToolkit-NGram',
-    version='1.0.20',
+    name='nlptoolkit_ngram',
+    version='1.0.21',
     packages=['NGram', 'test'],
     url='https://github.com/StarlangSoftware/NGram-Py',
     license='',
